@@ -20,7 +20,19 @@ public class SudokuSquare {
     for (boolean pencil : pencils) {
       pencil = false;
     }
-    value = 0;
+    this.value = 0;
+  }
+
+/**
+ * Constructs a SudokuSquare with the passed value.
+ * @param value value to create the square with
+ */
+  public SudokuSquare(int value) {
+    pencils = new boolean[9];
+    for (boolean pencil : pencils) {
+      pencil = false;
+    }
+      this.value = value;
   }
 
 /**
