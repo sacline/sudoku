@@ -51,10 +51,19 @@ public class SudokuBoard {
 /**
  * Returns the value of the cell at (row, column).
  * @param row row of the desired cell
- * @param column column of the desired cell
+ * @param col column of the desired cell
  */
-  public int getValue(int row, int column) {
-    return cells[row - 1][column - 1].getValue();
+  public int getValue(int row, int col) {
+    return cells[row - 1][col - 1].getValue();
+  }
+
+/**
+ * Returns the pencils of the cell at (row, column).
+ * @param row row of the desired cell
+ * @param col column of the desired cell
+ */
+  public boolean[] getPencils(int row, int col) {
+    return cells[row - 1][col - 1].getPencils();
   }
 
 /**

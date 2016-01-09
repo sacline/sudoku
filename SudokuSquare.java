@@ -71,6 +71,13 @@ public class SudokuSquare {
   }
 
 /**
+ * Returns an array of the pencils at the square.
+ */
+  public boolean[] getPencils() {
+    return pencils;
+  }
+
+/**
  * Removes all penciled values.
  */
   public void clearPencils() {
