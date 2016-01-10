@@ -8,6 +8,7 @@
  * @version 1.0
  */
 
+import java.util.Collections;
 import java.util.ArrayList;
 
 public class SudokuSquare {
@@ -57,6 +58,7 @@ public class SudokuSquare {
   public void addPencil(int value) {
     validateValue(value);
     pencils.add(value);
+    Collections.sort(pencils);
   }
 
 /**
@@ -110,7 +112,6 @@ public class SudokuSquare {
     SudokuSquare ss = new SudokuSquare();
     //ss.setValue(5);
     //System.out.println(ss.getValue());
-    ss.addPencil(7);
     System.out.println(ss.getPencils());
   }
 }
