@@ -20,6 +20,8 @@ import java.io.FileReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import java.util.ArrayList;
+
 public class SudokuBoard {
 
   private SudokuSquare[][] cells;
@@ -62,7 +64,7 @@ public class SudokuBoard {
  * @param row row of the desired cell
  * @param col column of the desired cell
  */
-  public boolean[] getPencils(int row, int col) {
+  public ArrayList<Integer> getPencils(int row, int col) {
     return cells[row - 1][col - 1].getPencils();
   }
 
@@ -83,27 +85,22 @@ public class SudokuBoard {
  * Returns the board as a string, formatted into a 9x9 grid.
  * @param pretty formats the string if true, uses toString() if false
  */
-  public String toString(boolean pretty) {
+  public String toPrettyString() {
     String string = "";
-    if (pretty == true) {
-      for (int i = 0; i < 9; i++) {
-        if (i == 3 || i == 6) {
-          string = string.concat("- - - - - - - - - - -\n");
+    for (int i = 0; i < 9; i++) {
+      if (i == 3 || i == 6) {
+        string = string.concat("- - - - - - - - - - -\n");
+      }
+      for (int j = 0; j < 9; j++) {
+        string = string.concat(
+            Integer.toString(cells[i][j].getValue())).concat(" ");
+        if (j == 2 || j == 5) {
+          string = string.concat("| ");
         }
-        for (int j = 0; j < 9; j++) {
-          string = string.concat(
-              Integer.toString(cells[i][j].getValue())).concat(" ");
-          if (j == 2 || j == 5) {
-            string = string.concat("| ");
-          }
-          if (j == 8) {
-            string = string.concat("\n");
-          }
+        if (j == 8) {
+          string = string.concat("\n");
         }
       }
-    }
-    else {
-      string = toString();
     }
     return string;
   }
