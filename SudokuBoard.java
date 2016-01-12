@@ -10,7 +10,7 @@
  * . 
  * (9,1) (9,2) ... (9,9)
  * <p>
- * 
+ *
  * @version 1.0
  */
 
@@ -19,6 +19,9 @@ import java.io.FileReader;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+
+import java.util.Arrays;
+import java.util.ArrayList;
 
 public class SudokuBoard {
 
@@ -37,7 +40,7 @@ public class SudokuBoard {
  */
   public SudokuBoard(String board) {
     if (board.length() != 81) {
-      throw new IllegalArgumentException("bad input board");
+      throw new IllegalArgumentException("Bad input board");
     }
     cells = new SudokuSquare[9][9];
     for (int i = 0; i < 9; i++) {
@@ -62,7 +65,7 @@ public class SudokuBoard {
  * @param row row of the desired cell
  * @param col column of the desired cell
  */
-  public boolean[] getPencils(int row, int col) {
+  public ArrayList<Integer> getPencils(int row, int col) {
     return cells[row - 1][col - 1].getPencils();
   }
 
@@ -83,27 +86,22 @@ public class SudokuBoard {
  * Returns the board as a string, formatted into a 9x9 grid.
  * @param pretty formats the string if true, uses toString() if false
  */
-  public String toString(boolean pretty) {
+  public String toPrettyString() {
     String string = "";
-    if (pretty == true) {
-      for (int i = 0; i < 9; i++) {
-        if (i == 3 || i == 6) {
-          string = string.concat("- - - - - - - - - - -\n");
+    for (int i = 0; i < 9; i++) {
+      if (i == 3 || i == 6) {
+        string = string.concat("- - - - - - - - - - -\n");
+      }
+      for (int j = 0; j < 9; j++) {
+        string = string.concat(
+            Integer.toString(cells[i][j].getValue())).concat(" ");
+        if (j == 2 || j == 5) {
+          string = string.concat("| ");
         }
-        for (int j = 0; j < 9; j++) {
-          string = string.concat(
-              Integer.toString(cells[i][j].getValue())).concat(" ");
-          if (j == 2 || j == 5) {
-            string = string.concat("| ");
-          }
-          if (j == 8) {
-            string = string.concat("\n");
-          }
+        if (j == 8) {
+          string = string.concat("\n");
         }
       }
-    }
-    else {
-      string = toString();
     }
     return string;
   }
@@ -114,7 +112,7 @@ public class SudokuBoard {
  */
   public SudokuSquare[] getRow(int row) {
     if (row < 1 || row > 9) {
-      throw new IllegalArgumentException("Row must be between 1 and 9.");
+      throw new IllegalArgumentException("Row must be from 1 to 9.");
     }
     SudokuSquare[] newrow = new SudokuSquare[9];
     for (int pos = 0; pos < 9; pos++) {
@@ -129,7 +127,7 @@ public class SudokuBoard {
  */
   public SudokuSquare[] getCol(int col) {
     if (col < 1 || col > 9) {
-      throw new IllegalArgumentException("Column must be between 1 and 9.");
+      throw new IllegalArgumentException("Column must be from 1 to 9.");
     }
     SudokuSquare[] newcol = new SudokuSquare[9];
     for (int pos = 0; pos < 9; pos++) {
@@ -139,14 +137,41 @@ public class SudokuBoard {
   }
 
 /**
+ * Returns the region as an array of SudokuSquares.
+ * Regions are the nine 3x3 subgrids on the board numbered as follows:
+ * 1 2 3
+ * 4 5 6
+ * 7 8 9
+ *
+ * @param region region number to return (1-9)
+ */
+  public SudokuSquare[] getReg(int region) {
+    if (region < 1 || region > 9) {
+      throw new IllegalArgumentException("Region must be from 1 to 9");
+    }
+    SudokuSquare[] newreg = new SudokuSquare[9];
+    //starting rows and cols for each region
+    int[] startingrow = {0, 0, 0, 3, 3, 3, 6, 6, 6};
+    int[] startingcol = {0, 3, 6, 0, 3, 6, 0, 3, 6};
+    for (int row = 0; row < 3; row++) {
+      for (int col = 0; col < 3; col++) {
+        newreg[row * 3 + col] =
+            cells[startingrow[region - 1] + row][startingcol[region - 1] + col];
+      }
+    }
+    return newreg;
+  }
+
+/**
  * Method for quick testing.
  */
   public static void main(String[] args) {
     try {
       BufferedReader in = new BufferedReader(new FileReader(args[0]));
       String boardstring = in.readLine();
-      //System.out.println(boardstring);
       SudokuBoard sb = new SudokuBoard(boardstring);
+      //System.out.println(sb.toPrettyString());
+      //System.out.println(Arrays.toString(sb.getReg(5)));
     } catch (FileNotFoundException e) {
       System.out.println("File not found");
       }

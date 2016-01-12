@@ -5,10 +5,14 @@
  * Each square will be able to hold a single value as well as multiple
  * penciled values.
  * 
- * @version 1.0
+ * @version 1.1
  */
+
+import java.util.Collections;
+import java.util.ArrayList;
+
 public class SudokuSquare {
-  private boolean[] pencils;
+  private ArrayList<Integer> pencils;
   private int value;
 
 /**
@@ -16,10 +20,7 @@ public class SudokuSquare {
  * Pencils set to false, representing no penciled values.
  */
   public SudokuSquare() {
-    pencils = new boolean[9];
-    for (boolean pencil : pencils) {
-      pencil = false;
-    }
+    pencils = new ArrayList<Integer>();
     this.value = 0;
   }
 
@@ -28,11 +29,9 @@ public class SudokuSquare {
  * @param value value to create the square with
  */
   public SudokuSquare(int value) {
-    pencils = new boolean[9];
-    for (boolean pencil : pencils) {
-      pencil = false;
-    }
-      this.value = value;
+    pencils = new ArrayList<Integer>();
+    validateValue(value);
+    this.value = value;
   }
 
 /**
@@ -53,27 +52,28 @@ public class SudokuSquare {
   }
 
 /**
- * Sets a penciled value.
+ * Adds a penciled value.
  * @param value value to pencil in
  */
-  public void setPencil(int value) {
+  public void addPencil(int value) {
     validateValue(value);
-    pencils[value - 1] = true;
+    pencils.add(value);
+    Collections.sort(pencils);
   }
 
 /**
  * Removes a penciled value.
  * @param value value to unpencil
  */
-  public void unPencil(int value) {
+  public void removePencil(int value) {
     validateValue(value);
-    pencils[value - 1] = false;
+    pencils.remove(new Integer(value));
   }
 
 /**
- * Returns an array of the pencils at the square.
+ * Returns the list of pencils at the square.
  */
-  public boolean[] getPencils() {
+  public ArrayList<Integer> getPencils() {
     return pencils;
   }
 
@@ -81,20 +81,21 @@ public class SudokuSquare {
  * Removes all penciled values.
  */
   public void clearPencils() {
-    for (boolean pencil : pencils) {
-      pencil = false;
-    }
+    pencils.clear();
   }
 
 /**
  * Returns (empty/full) state of square.
  */
   public boolean isFull() {
-    if (value != 0) { 
-      return true;
-    } else {
-      return false;
-    }
+    return (value != 0);
+  }
+
+/**
+ * Allows SudokuSquares to be printable with println.
+ */
+  public String toString() {
+    return Integer.toString(value);
   }
 
 /**
@@ -102,8 +103,18 @@ public class SudokuSquare {
  * @param value value to check
  */
   private void validateValue(int value) {
-    if (value < 1 || value > 9) {
-      throw new IllegalArgumentException("Value must be between 1 and 9.");
+    if (value < 0 || value > 9) {
+      throw new IllegalArgumentException("Value must be between 0 and 9.");
     }
+  }
+
+/**
+ * Method for basic testing.
+ */
+  public static void main(String[] args) {
+    SudokuSquare ss = new SudokuSquare();
+    //ss.setValue(5);
+    //System.out.println(ss.getValue());
+    System.out.println(ss.getPencils());
   }
 }
