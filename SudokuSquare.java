@@ -5,7 +5,7 @@
  * Each square will be able to hold a single value as well as multiple
  * penciled values.
  * 
- * @version 1.0
+ * @version 1.1
  */
 
 import java.util.Collections;
@@ -88,11 +88,14 @@ public class SudokuSquare {
  * Returns (empty/full) state of square.
  */
   public boolean isFull() {
-    if (value != 0) { 
-      return true;
-    } else {
-      return false;
-    }
+    return (value != 0);
+  }
+
+/**
+ * Allows SudokuSquares to be printable with println.
+ */
+  public String toString() {
+    return Integer.toString(value);
   }
 
 /**
@@ -100,8 +103,8 @@ public class SudokuSquare {
  * @param value value to check
  */
   private void validateValue(int value) {
-    if (value < 1 || value > 9) {
-      throw new IllegalArgumentException("Value must be between 1 and 9.");
+    if (value < 0 || value > 9) {
+      throw new IllegalArgumentException("Value must be between 0 and 9.");
     }
   }
 
