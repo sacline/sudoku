@@ -1,6 +1,5 @@
 /**
  * Basic building sudoku board building block.
- * <p> 
  * SudokuSquare is the class of objects that will make up a sudoku board.
  * Each square will be able to hold a single value as well as multiple
  * penciled values.
@@ -17,15 +16,15 @@ public class SudokuSquare {
 
 /**
  * Constructs an empty SudokuSquare.
- * Pencils set to false, representing no penciled values.
+ * Value set to 0 by default.
  */
   public SudokuSquare() {
-    pencils = new ArrayList<Integer>();
-    this.value = 0;
+    this(0);
   }
 
 /**
  * Constructs a SudokuSquare with the passed value.
+ *
  * @param value value to create the square with
  */
   public SudokuSquare(int value) {
@@ -37,6 +36,7 @@ public class SudokuSquare {
 /**
  * Sets the square value.
  * Value must be between 1 and 9 inclusive.
+ *
  * @param value desired value of square
  */
   public void setValue(int value) {
@@ -46,6 +46,8 @@ public class SudokuSquare {
 
 /**
  * Returns the square value. 
+ *
+ * @return the square's value
  */
   public int getValue() {
     return value;
@@ -53,6 +55,7 @@ public class SudokuSquare {
 
 /**
  * Adds a penciled value.
+ *
  * @param value value to pencil in
  */
   public void addPencil(int value) {
@@ -63,6 +66,7 @@ public class SudokuSquare {
 
 /**
  * Removes a penciled value.
+ *
  * @param value value to unpencil
  */
   public void removePencil(int value) {
@@ -72,20 +76,22 @@ public class SudokuSquare {
 
 /**
  * Returns the list of pencils at the square.
+ *
+ * @return list of pencils
  */
   public ArrayList<Integer> getPencils() {
     return pencils;
   }
 
-/**
- * Removes all penciled values.
- */
+/** Removes all penciled values. */
   public void clearPencils() {
     pencils.clear();
   }
 
 /**
  * Returns (empty/full) state of square.
+ *
+ * @return true if a value other than 0, false if 0.
  */
   public boolean isFull() {
     return (value != 0);
@@ -93,6 +99,8 @@ public class SudokuSquare {
 
 /**
  * Allows SudokuSquares to be printable with println.
+ *
+ * @return the string representation of the square's value
  */
   public String toString() {
     return Integer.toString(value);
@@ -100,6 +108,7 @@ public class SudokuSquare {
 
 /**
  * Throws exceptions for a bad input.
+ *
  * @param value value to check
  */
   private void validateValue(int value) {
@@ -108,9 +117,7 @@ public class SudokuSquare {
     }
   }
 
-/**
- * Method for basic testing.
- */
+/** Method for basic testing. */
   public static void main(String[] args) {
     SudokuSquare ss = new SudokuSquare();
     //ss.setValue(5);

@@ -9,7 +9,6 @@
  * .
  * . 
  * (9,1) (9,2) ... (9,9)
- * <p>
  *
  * @version 1.0
  */
@@ -27,32 +26,36 @@ public class SudokuBoard {
 
   private SudokuSquare[][] cells;
 
-/**
- * Constructs an empty SudokuBoard.
- */
+/** Constructs an empty SudokuBoard. */
   public SudokuBoard() {
-    cells = new SudokuSquare[9][9];
+    this(null);
   }
 
 /**
- * Constructs a SudokuBoard populated with the input.
+ * Primary SudokuBoard constructor.
+ * Input may be null, which will create an empty board.
+ * It also handles a string representing a board.
+ *
  * @param board 81-character string representing a sudoku board.
  */
   public SudokuBoard(String board) {
-    if (board.length() != 81) {
-      throw new IllegalArgumentException("Bad input board");
-    }
     cells = new SudokuSquare[9][9];
-    for (int i = 0; i < 9; i++) {
-      for (int j = 0; j < 9; j++) {
-        cells[i][j] = new SudokuSquare(
-            Character.getNumericValue(board.charAt(i * 9 + j)));
+    if (board != null) {
+      if (board.length() != 81) {
+        throw new IllegalArgumentException("Bad input board");
+      }
+      for (int i = 0; i < 9; i++) {
+        for (int j = 0; j < 9; j++) {
+          cells[i][j] = new SudokuSquare(
+              Character.getNumericValue(board.charAt(i * 9 + j)));
+        }
       }
     }
   }
 
 /**
  * Returns the value of the cell at (row, column).
+ *
  * @param row row of the desired cell
  * @param col column of the desired cell
  */
@@ -62,6 +65,7 @@ public class SudokuBoard {
 
 /**
  * Returns the pencils of the cell at (row, column).
+ *
  * @param row row of the desired cell
  * @param col column of the desired cell
  */
@@ -71,6 +75,8 @@ public class SudokuBoard {
 
 /**
  * Returns the board as represented by an 81-character string.
+ *
+ * @return the 81-char string
  */
   public String toString() {
     String string = "";
@@ -84,7 +90,8 @@ public class SudokuBoard {
 
 /**
  * Returns the board as a string, formatted into a 9x9 grid.
- * @param pretty formats the string if true, uses toString() if false
+ *
+ * @return the formatted string
  */
   public String toPrettyString() {
     String string = "";
@@ -108,7 +115,9 @@ public class SudokuBoard {
 
 /**
  * Returns the specified row as an array of SudokuSquares.
+ *
  * @param row row number to return from 1-9
+ * @return the array of squares in specified row
  */
   public SudokuSquare[] getRow(int row) {
     if (row < 1 || row > 9) {
@@ -123,7 +132,9 @@ public class SudokuBoard {
 
 /**
  * Returns the specified column as an array of SudokuSquares.
+ *
  * @param col column number to return from 1-9
+ * @return the array of squares in specified column
  */
   public SudokuSquare[] getCol(int col) {
     if (col < 1 || col > 9) {
@@ -144,6 +155,7 @@ public class SudokuBoard {
  * 7 8 9
  *
  * @param region region number to return (1-9)
+ * @return the array of squares in specified region
  */
   public SudokuSquare[] getReg(int region) {
     if (region < 1 || region > 9) {
@@ -162,9 +174,7 @@ public class SudokuBoard {
     return newreg;
   }
 
-/**
- * Method for quick testing.
- */
+/** Method for quick testing. */
   public static void main(String[] args) {
     try {
       BufferedReader in = new BufferedReader(new FileReader(args[0]));
