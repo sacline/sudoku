@@ -84,16 +84,16 @@ public class SudokuSolver {
 /**
  * Checks that a generic unit satisfies the One Rule.
  * A unit can be a row, column, or region. The unit is passed as an array
- * of SudokuSquares.
+ * of ints.
  *
- * @param unit array of squares to check
+ * @param unit array of square values to check
  * @return true if the unit is complete and correct, false if not
  */
-  private boolean checkUnit(SudokuSquare[] unit) {
+  private boolean checkUnit(int[] unit) {
     int[] target = {1, 2, 3, 4, 5, 6, 7, 8, 9};
     int[] unitvalues = new int[9];
     for (int index = 0; index < 9; index++) {
-      unitvalues[index] = unit[index].getValue();
+      unitvalues[index] = unit[index];
     }
     Arrays.sort(unitvalues);
     return Arrays.equals(unitvalues, target);

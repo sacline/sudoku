@@ -40,6 +40,13 @@ public class SudokuBoard {
  */
   public SudokuBoard(String board) {
     cells = new SudokuSquare[9][9];
+    if (board == null) {
+      for (int i = 0; i < 9; i++) {
+        for (int j = 0; j < 9; j++) {
+          cells[i][j] = new SudokuSquare();
+        }
+      }
+    }
     if (board != null) {
       if (board.length() != 81) {
         throw new IllegalArgumentException("Bad input board");
@@ -60,7 +67,7 @@ public class SudokuBoard {
  * @param col column of the desired cell
  */
   public int getValue(int row, int col) {
-    return cells[row - 1][col - 1].getValue();
+    return cells[row - 1][col - 1].value;
   }
 
 /**
@@ -70,7 +77,7 @@ public class SudokuBoard {
  * @param col column of the desired cell
  */
   public ArrayList<Integer> getPencils(int row, int col) {
-    return cells[row - 1][col - 1].getPencils();
+    return cells[row - 1][col - 1].pencils;
   }
 
 /**
@@ -82,7 +89,7 @@ public class SudokuBoard {
     String string = "";
     for (int i = 0; i < 9; i++) {
       for (int j = 0; j < 9; j++) {
-        string = string.concat(Integer.toString(cells[i][j].getValue()));
+        string = string.concat(Integer.toString(cells[i][j].value));
       }
     }
     return string;
@@ -101,7 +108,7 @@ public class SudokuBoard {
       }
       for (int j = 0; j < 9; j++) {
         string = string.concat(
-            Integer.toString(cells[i][j].getValue())).concat(" ");
+            Integer.toString(cells[i][j].value)).concat(" ");
         if (j == 2 || j == 5) {
           string = string.concat("| ");
         }
@@ -114,41 +121,41 @@ public class SudokuBoard {
   }
 
 /**
- * Returns the specified row as an array of SudokuSquares.
+ * Returns the specified row as an array of ints.
  *
  * @param row row number to return from 1-9
- * @return the array of squares in specified row
+ * @return the array of square values in specified row
  */
-  public SudokuSquare[] getRow(int row) {
+  public int[] getRow(int row) {
     if (row < 1 || row > 9) {
       throw new IllegalArgumentException("Row must be from 1 to 9.");
     }
-    SudokuSquare[] newrow = new SudokuSquare[9];
-    for (int pos = 0; pos < 9; pos++) {
-      newrow[pos] = cells[row - 1][pos];
+    int[] newrow = new int[9];
+    for (int pos = 1; pos < 10; pos++) {
+      newrow[pos - 1] = getValue(row, pos);
     }
     return newrow;
   }
 
 /**
- * Returns the specified column as an array of SudokuSquares.
+ * Returns the specified column as an array of ints.
  *
  * @param col column number to return from 1-9
- * @return the array of squares in specified column
+ * @return the array of square values in specified column
  */
-  public SudokuSquare[] getCol(int col) {
+  public int[] getCol(int col) {
     if (col < 1 || col > 9) {
       throw new IllegalArgumentException("Column must be from 1 to 9.");
     }
-    SudokuSquare[] newcol = new SudokuSquare[9];
-    for (int pos = 0; pos < 9; pos++) {
-      newcol[pos] = cells[pos][col - 1];
+    int[] newcol = new int[9];
+    for (int pos = 1; pos < 10; pos++) {
+      newcol[pos - 1] = getValue(pos, col);
     }
     return newcol;
   }
 
 /**
- * Returns the region as an array of SudokuSquares.
+ * Returns the region as an array of ints.
  * Regions are the nine 3x3 subgrids on the board numbered as follows:
  * 1 2 3
  * 4 5 6
@@ -157,18 +164,18 @@ public class SudokuBoard {
  * @param region region number to return (1-9)
  * @return the array of squares in specified region
  */
-  public SudokuSquare[] getReg(int region) {
+  public int[] getReg(int region) {
     if (region < 1 || region > 9) {
       throw new IllegalArgumentException("Region must be from 1 to 9");
     }
-    SudokuSquare[] newreg = new SudokuSquare[9];
+    int[] newreg = new int[9];
     //starting rows and cols for each region
-    int[] startingrow = {0, 0, 0, 3, 3, 3, 6, 6, 6};
-    int[] startingcol = {0, 3, 6, 0, 3, 6, 0, 3, 6};
+    int[] startingrow = {1, 1, 1, 4, 4, 4, 7, 7, 7};
+    int[] startingcol = {1, 4, 7, 1, 4, 7, 1, 4, 7};
     for (int row = 0; row < 3; row++) {
       for (int col = 0; col < 3; col++) {
         newreg[row * 3 + col] =
-            cells[startingrow[region - 1] + row][startingcol[region - 1] + col];
+            getValue(startingrow[region - 1] + row, startingcol[region - 1] + col);
       }
     }
     return newreg;
@@ -187,16 +194,16 @@ public class SudokuBoard {
    * Constructs an empty SudokuSquare.
    * Value set to 0 by default.
    */
-    public SudokuSquare() {
+    private SudokuSquare() {
       this(0);
     }
 
   /**
-   * Constructs a SudokuSquare with the passed value.
+   * Constructs a SudokuSquare with the specified value.
    *
    * @param value value to create the square with
    */
-    public SudokuSquare(int value) {
+    private SudokuSquare(int value) {
       pencils = new ArrayList<Integer>();
       validateValue(value);
       this.value = value;
@@ -208,18 +215,9 @@ public class SudokuBoard {
    *
    * @param value desired value of square
    */
-    public void setValue(int value) {
+    private void setValue(int value) {
       validateValue(value);
       this.value = value;
-    }
-
-  /**
-   * Returns the square value.
-   *
-   * @return the square's value
-   */
-    public int getValue() {
-      return value;
     }
 
   /**
@@ -227,7 +225,7 @@ public class SudokuBoard {
    *
    * @param value value to pencil in
    */
-    public void addPencil(int value) {
+    private void addPencil(int value) {
       validateValue(value);
       pencils.add(value);
       Collections.sort(pencils);
@@ -238,22 +236,13 @@ public class SudokuBoard {
    *
    * @param value value to unpencil
    */
-    public void removePencil(int value) {
+    private void removePencil(int value) {
       validateValue(value);
       pencils.remove(new Integer(value));
     }
 
-  /**
-   * Returns the list of pencils at the square.
-   *
-   * @return list of pencils
-   */
-    public ArrayList<Integer> getPencils() {
-      return pencils;
-    }
-
   /** Removes all penciled values. */
-    public void clearPencils() {
+    private void clearPencils() {
       pencils.clear();
     }
 
@@ -262,7 +251,7 @@ public class SudokuBoard {
    *
    * @return true if a value other than 0, false if 0.
    */
-    public boolean isFull() {
+    private boolean isFull() {
       return (value != 0);
     }
 
@@ -291,7 +280,8 @@ public class SudokuBoard {
     try {
       BufferedReader in = new BufferedReader(new FileReader(args[0]));
       String boardstring = in.readLine();
-      SudokuBoard sb = new SudokuBoard(boardstring);
+      SudokuBoard sb = new SudokuBoard();
+      //SudokuBoard sb = new SudokuBoard(boardstring);
       System.out.println(sb.toPrettyString());
       //System.out.println(Arrays.toString(sb.getReg(5)));
     } catch (FileNotFoundException e) {
