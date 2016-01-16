@@ -20,7 +20,7 @@ import java.util.Collections;
  * .
  * (9,1) (9,2) ... (9,9)
  *
- * @version 1.1
+ * @version 1.2
  */
 public class SudokuBoard {
 
@@ -71,6 +71,17 @@ public class SudokuBoard {
   }
 
 /**
+ * Sets the value of a cell.
+ *
+ * @param row row of the desired cell
+ * @param col column of the desired cell
+ * @param value value to set the cell
+ */
+  public void setValue(int row, int col, int value) {
+    cells[row - 1][col - 1].setValue(value);
+  }
+
+/**
  * Returns the pencils of the cell at (row, column).
  *
  * @param row row of the desired cell
@@ -78,6 +89,38 @@ public class SudokuBoard {
  */
   public ArrayList<Integer> getPencils(int row, int col) {
     return cells[row - 1][col - 1].pencils;
+  }
+
+/**
+ * Adds a specified pencil to the cell at (row, column).
+ *
+ * @param row row of the desired cell
+ * @param col column of the desired cell
+ * @param value value to add to pencils
+ */
+  public void addPencil(int row, int col, int value) {
+    cells[row - 1][col - 1].addPencil(value);
+  }
+
+/**
+ * Removes a specified pencil to the cell at (row, column).
+ *
+ * @param row row of the desired cell
+ * @param col column of the desired cell
+ * @param value value to remove from pencils
+ */
+  public void removePencil(int row, int col, int value) {
+    cells[row - 1][col - 1].removePencil(value);
+  }
+
+/**
+ * Clear all pencils from the cell at (row, column).
+ *
+ * @param row row of the desired cell
+ * @param col column of the desired cell
+ */
+  public void clearPencils(int row, int col) {
+    cells[row - 1][col - 1].clearPencils();
   }
 
 /**
@@ -164,7 +207,8 @@ public class SudokuBoard {
  * @param region region number to return (1-9)
  * @return the array of squares in specified region
  */
-  public int[] getReg(int region) {
+  public int[] getReg(int row, int col) {
+    int region = findReg(row, col);
     if (region < 1 || region > 9) {
       throw new IllegalArgumentException("Region must be from 1 to 9");
     }
@@ -172,15 +216,49 @@ public class SudokuBoard {
     //starting rows and cols for each region
     int[] startingrow = {1, 1, 1, 4, 4, 4, 7, 7, 7};
     int[] startingcol = {1, 4, 7, 1, 4, 7, 1, 4, 7};
-    for (int row = 0; row < 3; row++) {
-      for (int col = 0; col < 3; col++) {
-        newreg[row * 3 + col] =
-            getValue(startingrow[region - 1] + row, startingcol[region - 1] + col);
+    for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < 3; j++) {
+        newreg[i * 3 + j] =
+            getValue(startingrow[region - 1] + i, startingcol[region - 1] + j);
       }
     }
     return newreg;
   }
 
+/**
+ * Returns the region number for the cell at (row, col)
+ *
+ * @param row row of specified cell
+ * @param col column of specified cell
+ * @return the region number corresponding to the cell
+ */
+  private int findReg(int row, int col) {
+    if (row < 4 && col < 4) {
+      return 1;
+    }
+    if (row < 4 && col < 7) {
+      return 2;
+    }
+    if (row < 4) {
+      return 3;
+    }
+    if (row < 7 && col < 4) {
+      return 4;
+    }
+    if (row < 7 && col < 7) {
+      return 5;
+    }
+    if (row < 7) {
+      return 6;
+    }
+    if (col < 4) {
+      return 7;
+    }
+    if (col < 7) {
+      return 8;
+    }
+      return 9;
+  }
 /**
  * Basic building sudoku board building block.
  * SudokuSquare is the class of objects that will make up a sudoku board.
@@ -275,15 +353,14 @@ public class SudokuBoard {
       }
     }
   }
+
 /** Method for quick testing. */
   public static void main(String[] args) {
     try {
       BufferedReader in = new BufferedReader(new FileReader(args[0]));
       String boardstring = in.readLine();
-      SudokuBoard sb = new SudokuBoard();
-      //SudokuBoard sb = new SudokuBoard(boardstring);
-      System.out.println(sb.toPrettyString());
-      //System.out.println(Arrays.toString(sb.getReg(5)));
+      SudokuBoard sb = new SudokuBoard(boardstring);
+      //System.out.println(sb.toPrettyString());
     } catch (FileNotFoundException e) {
       System.out.println("File not found");
       }
