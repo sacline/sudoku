@@ -67,6 +67,8 @@ public class SudokuBoard {
  * @param col column of the desired cell
  */
   public int getValue(int row, int col) {
+    validateRowCol(row);
+    validateRowCol(col);
     return cells[row - 1][col - 1].value;
   }
 
@@ -78,6 +80,8 @@ public class SudokuBoard {
  * @param value value to set the cell
  */
   public void setValue(int row, int col, int value) {
+    validateRowCol(row);
+    validateRowCol(col);
     cells[row - 1][col - 1].setValue(value);
   }
 
@@ -88,6 +92,8 @@ public class SudokuBoard {
  * @param col column of the desired cell
  */
   public ArrayList<Integer> getPencils(int row, int col) {
+    validateRowCol(row);
+    validateRowCol(col);
     return cells[row - 1][col - 1].pencils;
   }
 
@@ -99,6 +105,8 @@ public class SudokuBoard {
  * @param value value to add to pencils
  */
   public void addPencil(int row, int col, int value) {
+    validateRowCol(row);
+    validateRowCol(col);
     cells[row - 1][col - 1].addPencil(value);
   }
 
@@ -110,6 +118,8 @@ public class SudokuBoard {
  * @param value value to remove from pencils
  */
   public void removePencil(int row, int col, int value) {
+    validateRowCol(row);
+    validateRowCol(col);
     cells[row - 1][col - 1].removePencil(value);
   }
 
@@ -120,6 +130,8 @@ public class SudokuBoard {
  * @param col column of the desired cell
  */
   public void clearPencils(int row, int col) {
+    validateRowCol(row);
+    validateRowCol(col);
     cells[row - 1][col - 1].clearPencils();
   }
 
@@ -128,6 +140,7 @@ public class SudokuBoard {
  *
  * @return the 81-char string
  */
+  @Override
   public String toString() {
     String string = "";
     for (int i = 0; i < 9; i++) {
@@ -170,9 +183,7 @@ public class SudokuBoard {
  * @return the array of square values in specified row
  */
   public int[] getRow(int row) {
-    if (row < 1 || row > 9) {
-      throw new IllegalArgumentException("Row must be from 1 to 9.");
-    }
+    validateRowCol(row);
     int[] newrow = new int[9];
     for (int pos = 1; pos < 10; pos++) {
       newrow[pos - 1] = getValue(row, pos);
@@ -187,9 +198,7 @@ public class SudokuBoard {
  * @return the array of square values in specified column
  */
   public int[] getCol(int col) {
-    if (col < 1 || col > 9) {
-      throw new IllegalArgumentException("Column must be from 1 to 9.");
-    }
+    validateRowCol(col);
     int[] newcol = new int[9];
     for (int pos = 1; pos < 10; pos++) {
       newcol[pos - 1] = getValue(pos, col);
@@ -208,10 +217,9 @@ public class SudokuBoard {
  * @return the array of squares in specified region
  */
   public int[] getReg(int row, int col) {
+    validateRowCol(row);
+    validateRowCol(col);
     int region = findReg(row, col);
-    if (region < 1 || region > 9) {
-      throw new IllegalArgumentException("Region must be from 1 to 9");
-    }
     int[] newreg = new int[9];
     //starting rows and cols for each region
     int[] startingrow = {1, 1, 1, 4, 4, 4, 7, 7, 7};
@@ -259,6 +267,16 @@ public class SudokuBoard {
     }
       return 9;
   }
+/**
+ * Throws exceptions for a bad row or column input
+ *
+ * @param index row or column to check
+ */
+  private void validateRowCol(int index) {
+      if (index < 1 || index > 9) {
+        throw new IllegalArgumentException("Rows and columns must be from 1 to 9.");
+      }
+    }
 /**
  * Basic building sudoku board building block.
  * SudokuSquare is the class of objects that will make up a sudoku board.
@@ -338,6 +356,7 @@ public class SudokuBoard {
    *
    * @return the string representation of the square's value
    */
+    @Override
     public String toString() {
       return Integer.toString(value);
     }
@@ -353,7 +372,6 @@ public class SudokuBoard {
       }
     }
   }
-
 /** Method for quick testing. */
   public static void main(String[] args) {
     try {
