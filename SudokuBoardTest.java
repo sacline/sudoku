@@ -64,4 +64,25 @@ public class SudokuBoardTest {
     SudokuBoard board = new SudokuBoard();
     board.getValue(largerow, 5);
   }
+
+  @Test
+  public void boardEqualityTest() {
+    String one = "391286574487359126652714839875431692213967485964528713149673258538142967726895341";
+    String two = "391286574487359126652714839875431692213967485964528713149673258538142967726895341";
+    SudokuBoard boardone = new SudokuBoard(one);
+    SudokuBoard boardtwo = new SudokuBoard(two);
+    assertEquals("Two of the same boards are not equal", boardone, boardtwo);
+    assertEquals("Two of the same boards are not equal",
+        boardone.hashCode(), boardtwo.hashCode());
+    boardone.setValue(1, 1, 2);
+    boardtwo.setValue(1, 1, 2);
+    assertEquals("Two of the same boards are not equal", boardone, boardtwo);
+    assertEquals("Two of the same boards are not equal",
+        boardone.hashCode(), boardtwo.hashCode());
+    boardone.addPencil(1, 1, 5);
+    boardtwo.addPencil(1, 1, 5);
+    assertEquals("Two of the same boards are not equal", boardone, boardtwo);
+    assertEquals("Two of the same boards are not equal",
+        boardone.hashCode(), boardtwo.hashCode());
+  }
 }

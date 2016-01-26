@@ -177,6 +177,61 @@ public class SudokuBoard {
   }
 
 /**
+ * Compares one SudokuBoard to another.
+ *
+ * @param compareboard the board to compare with
+ * @return true if the same, false if not
+ */
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (!(obj instanceof SudokuBoard)) {
+      return false;
+    }
+    SudokuBoard compareboard = (SudokuBoard) obj;
+    for (int i = 1; i < 10; i++) {
+      for (int j = 1; j < 10; j++) {
+        if (this.getValue(i, j) == compareboard.getValue(i, j) &&
+            this.getPencils(i, j).equals(compareboard.getPencils(i,j))) {
+          continue;
+        }
+        else {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+/**
+ * Generates a hashcode for the SudokuBoard.
+ *
+ * @return hashcode representing the board
+ */
+  @Override
+  public int hashCode() {
+    int result = 1;
+    for (int i = 1; i < 10; i++) {
+      for (int j = 1; j < 10; j++) {
+        result *= i;
+        result *= j;
+        result += Integer.valueOf(this.getValue(i, j)).hashCode();
+        for (Integer pencil : this.getPencils(i, j)) {
+          result *= 31;
+          result += pencil.hashCode();
+        }
+        result += this.getPencils(i,j).hashCode();
+      }
+    }
+    return result;
+  }
+
+/**
  * Returns the specified row as an array of ints.
  *
  * @param row row number to return from 1-9
@@ -378,6 +433,7 @@ public class SudokuBoard {
       BufferedReader in = new BufferedReader(new FileReader(args[0]));
       String boardstring = in.readLine();
       SudokuBoard sb = new SudokuBoard(boardstring);
+      System.out.println(sb.getPencils(1,1).size());
       //System.out.println(sb.toPrettyString());
     } catch (FileNotFoundException e) {
       System.out.println("File not found");

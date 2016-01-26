@@ -1,14 +1,7 @@
-/**
- * Class containing methods for evaluating a SudokuBoard.
- * The SudokuSolver class contains algorithms to find the solution to an
- * incomplete SudokuBoard. A sudoku puzzle is solved once the values of its
- * squares satisfy the "One Rule": each row, column, and region must contain
- * the digits 1-9 exactly once.
- *
- * @version 1.1
- */
-
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 
 import java.io.FileNotFoundException;
@@ -18,6 +11,15 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+/**
+ * Class containing methods for evaluating a SudokuBoard.
+ * The SudokuSolver class contains algorithms to find the solution to an
+ * incomplete SudokuBoard. A sudoku puzzle is solved once the values of its
+ * squares satisfy the "One Rule": each row, column, and region must contain
+ * the digits 1-9 exactly once.
+ *
+ * @version 1.1
+ */
 public class SudokuSolver {
 
 /**
@@ -182,11 +184,16 @@ public class SudokuSolver {
       }
     }
     int index = 0; 
-    bruteForceTest(newboard, unsolved, index);
+    bruteForce(newboard, unsolved, index);
+    for (int i = 1; i < 10; i++) {
+      for (int j = 1; j < 10; j++) {
+        newboard.clearPencils(i, j);
+      }
+    }
     return newboard;
   }
 
-  private void bruteForceTest(
+  private void bruteForce(
       SudokuBoard board, ArrayList<Integer> unsolved, int index) {
     if (isSolved(board)) {
       return;
@@ -197,7 +204,7 @@ public class SudokuSolver {
     for (Integer pencil : board.getPencils(i, j)) {
       if (validValue(board, i, j, pencil)) {
         board.setValue(i, j, pencil);
-        bruteForceTest(board, unsolved, index + 1);
+        bruteForce(board, unsolved, index + 1);
         if (!isSolved(board)) {
           board.setValue(i, j, 0);
         }
@@ -208,7 +215,11 @@ public class SudokuSolver {
 /** Method for simple tests. */
   public static void main(String[] args) {
     try {
+      int counter = 0;
       BufferedReader in = new BufferedReader(new FileReader(args[0]));
+      /*BufferedWriter writer = new BufferedWriter(
+          new OutputStreamWriter(new FileOutputStream
+          ((args[0] + "_SOLVED")), "utf-8"));*/
       String puzzle;
       SudokuSolver solver = new SudokuSolver();
       while ((puzzle = in.readLine()) != null) {

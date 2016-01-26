@@ -9,7 +9,8 @@ import org.junit.runner.notification.Failure;
 public class SudokuTestRunner {
 
   public static void main(String[] args) {
-    Result result = JUnitCore.runClasses(SudokuBoardTest.class);
+    Result result = JUnitCore.runClasses(
+        SudokuBoardTest.class, SudokuSolverTest.class);
     for (Failure failure : result.getFailures()) {
       System.out.println(failure.toString());
     }
