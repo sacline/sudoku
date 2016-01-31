@@ -1,4 +1,6 @@
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 /**
@@ -66,6 +68,19 @@ public class SudokuBoardTest {
   }
 
   @Test
+  public void copyBoardTest() {
+    final String BOARD = "391286574487359126652714839875431692213967485964528713149673258538142967726895341";
+    SudokuBoard originalboard = new SudokuBoard(BOARD);
+    SudokuBoard copy = originalboard.copyBoard();
+    assertEquals("Board copy test failed", originalboard, copy);
+    //modify original board and make sure the copy does not change
+    originalboard.setValue(1,1,2);
+    assertFalse(originalboard.equals(copy));
+    copy = originalboard.copyBoard();
+    assertEquals("Board copy test failed", originalboard, copy);
+  }
+
+  @Test
   public void boardEqualityTest() {
     String one = "391286574487359126652714839875431692213967485964528713149673258538142967726895341";
     String two = "391286574487359126652714839875431692213967485964528713149673258538142967726895341";
@@ -84,5 +99,47 @@ public class SudokuBoardTest {
     assertEquals("Two of the same boards are not equal", boardone, boardtwo);
     assertEquals("Two of the same boards are not equal",
         boardone.hashCode(), boardtwo.hashCode());
+  }
+
+  @Test
+  public void boardUndoMoveTest() {
+    String boardstring = "391286574487359126652714839875431692213967485964528713149673258538142967726895341";
+    SudokuBoard board = new SudokuBoard(boardstring);
+    board.setValue(1, 1, 2);
+    board.undoMove();
+    assertEquals(board.toString(), boardstring);
+    board.addPencil(1, 1, 5);
+    board.undoMove();
+    assertTrue(board.getPencils(1, 1).size() == 0);
+    board.addPencil(1, 1, 4);
+    board.removePencil(1, 1, 4);
+    assertTrue(board.getPencils(1, 1).size() == 0);
+    board.undoMove();
+    assertTrue(board.getPencils(1, 1).size() == 1);
+    board.undoMove();
+    assertTrue(board.getPencils(1, 1).size() == 0);
+    //tests that the most recent move is undone
+    board.setValue(1, 1, 5);
+    board.setValue(1, 2, 4);
+    board.setValue(1, 3, 3);
+    board.undoMove();
+    assertEquals(board.getValue(1, 3), 1);
+    assertEquals(board.getValue(1, 2), 4);
+    board.undoMove();
+    assertEquals(board.getValue(1, 2), 9);
+  }
+
+  @Test
+  public void originalBoardTest() {
+    String boardstring = "391286574487359126652714839875431692213967485964528713149673258538142967726895341";
+    SudokuBoard board = new SudokuBoard(boardstring);
+    board.setValue(1, 1, 5);
+    board.setValue(3, 5, 8);
+    board.setValue(1, 2, 9);
+    board.setValue(5, 7, 9);
+    SudokuBoard original = board.originalBoard();
+    assertEquals(original.toString(), boardstring);
+    board = board.originalBoard();
+    assertEquals(board.toString(), boardstring);
   }
 }

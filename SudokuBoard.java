@@ -6,7 +6,9 @@ import java.io.IOException;
 
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.ArrayDeque;
 import java.util.Collections;
+import java.util.NoSuchElementException;
 
 /**
  * Standard 9 x 9 sudoku board made from SudokuSquares.
@@ -23,8 +25,8 @@ import java.util.Collections;
  * @version 1.2
  */
 public class SudokuBoard {
-
   private SudokuSquare[][] cells;
+  private ArrayDeque<Move> moves;
 
 /** Constructs an empty SudokuBoard. */
   public SudokuBoard() {
@@ -40,6 +42,7 @@ public class SudokuBoard {
  */
   public SudokuBoard(String board) {
     cells = new SudokuSquare[9][9];
+    moves = new ArrayDeque<Move>();
     if (board == null) {
       for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
@@ -59,6 +62,28 @@ public class SudokuBoard {
       }
     }
   }
+
+/**
+ * Returns a new copy of the board.
+ *
+ * @param board the board to copy
+ * @return copy of this board
+ */
+  public SudokuBoard copyBoard() {
+    SudokuBoard copy = new SudokuBoard(this.toString());
+    for (int i = 1; i < 10; i++) {
+      for (int j = 1; j < 10; j++) {
+        for (int pencil : getPencils(i, j)) {
+          copy.addPencil(i, j, pencil);
+        }
+      }
+    }
+    for (Move move : this.moves) {
+      copy.moves.add(new Move(move.row, move.col, move.value, move.change));
+    }
+    return copy;
+  }
+
 
 /**
  * Returns the value of the cell at (row, column).
@@ -82,6 +107,7 @@ public class SudokuBoard {
   public void setValue(int row, int col, int value) {
     validateRowCol(row);
     validateRowCol(col);
+    moves.addFirst(new Move(row, col, getValue(row, col), "+v"));
     cells[row - 1][col - 1].setValue(value);
   }
 
@@ -107,6 +133,7 @@ public class SudokuBoard {
   public void addPencil(int row, int col, int value) {
     validateRowCol(row);
     validateRowCol(col);
+    moves.addFirst(new Move(row, col, value, "+p"));
     cells[row - 1][col - 1].addPencil(value);
   }
 
@@ -120,6 +147,7 @@ public class SudokuBoard {
   public void removePencil(int row, int col, int value) {
     validateRowCol(row);
     validateRowCol(col);
+    moves.addFirst(new Move(row, col, value, "-p"));
     cells[row - 1][col - 1].removePencil(value);
   }
 
@@ -132,7 +160,57 @@ public class SudokuBoard {
   public void clearPencils(int row, int col) {
     validateRowCol(row);
     validateRowCol(col);
+    for (int pencil : getPencils(row, col)) {
+      moves.addFirst(new Move(row, col, pencil, "-p"));
+    }
     cells[row - 1][col - 1].clearPencils();
+  }
+
+/**
+ * Reverts the most recent change to the board.
+ */
+  public void undoMove() {
+    try {
+      reverseMove(moves.removeFirst());
+    } catch (NoSuchElementException e) {
+      return;
+    }
+  }
+
+/**
+ * Returns the original board after reverting all moves.
+ *
+ * @return a copy of the board at its starting point
+ */
+  public SudokuBoard originalBoard() {
+    SudokuBoard copy = new SudokuBoard();
+    copy = copyBoard();
+    while (copy.moves.size() != 0) {
+      copy.undoMove();
+    }
+    return copy;
+  }
+
+/**
+ * Examines a move and performs the reverse operation on the board.
+ */
+  private void reverseMove(Move recentmove) {
+    switch (recentmove.change) {
+      case "+v":
+        setValue(recentmove.row, recentmove.col, recentmove.value);
+        moves.removeFirst();
+        break;
+      case "+p":
+        removePencil(recentmove.row, recentmove.col, recentmove.value);
+        moves.removeFirst();
+        break;
+      case "-p":
+        addPencil(recentmove.row, recentmove.col, recentmove.value);
+        moves.removeFirst();
+        break;
+      default:
+        System.out.println("invalid move being removed");
+    }
   }
 
 /**
@@ -179,7 +257,7 @@ public class SudokuBoard {
 /**
  * Compares one SudokuBoard to another.
  *
- * @param compareboard the board to compare with
+ * @param obj board to compare with
  * @return true if the same, false if not
  */
   @Override
@@ -332,8 +410,29 @@ public class SudokuBoard {
         throw new IllegalArgumentException("Rows and columns must be from 1 to 9.");
       }
     }
+
 /**
- * Basic building sudoku board building block.
+ * Object representing a change made to the board.
+ * Each move will contain information on a change made to the board.
+ * Moves will mainly be used in keeping a record of how a board
+ * transitioned from one point to another (from unsolved to solved).
+ */
+  class Move {
+    private int row;
+    private int col;
+    private int value;
+    private String change;
+
+    private Move(int row, int col, int value, String change) {
+      this.row = row;
+      this.col = col;
+      this.value = value;
+      this.change = change;
+    }
+  }
+
+/**
+ * Basic sudoku board building block.
  * SudokuSquare is the class of objects that will make up a sudoku board.
  * Each square will be able to hold a single value as well as multiple
  * penciled values.
