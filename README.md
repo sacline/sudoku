@@ -1,11 +1,15 @@
 Sudoku
 
-This project is a java implementation of a Sudoku game.
+This project is a Java implementation of a Sudoku game.
 
-It is still very much a work in progress, but some planned features/functionality include:
+Current features:
 
--Board with typical sudoku features such as penciling
+-Board is implemented with ability to keep square values, pencils, and a record of moves made.
 
--Efficient implementation of algorithms for solving a given board (i.e. avoiding guess-and-check methods)
+-Solver for brute force solving of a board.
 
--GUI for user play with "hint" feature
+Planned features:
+
+-Efficient implementation of algorithms for solving a board deterministically (non brute-force).
+
+-GUI to play games and check solution
