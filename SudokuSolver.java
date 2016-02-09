@@ -3,10 +3,8 @@ import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -17,8 +15,6 @@ import java.util.Iterator;
  * incomplete SudokuBoard. A sudoku puzzle is solved once the values of its
  * squares satisfy the "One Rule": each row, column, and region must contain
  * the digits 1-9 exactly once.
- *
- * @version 1.1
  */
 public class SudokuSolver {
 
@@ -136,6 +132,8 @@ public class SudokuSolver {
  * Finds the valid pencils of a cell and adds them.
  * This is used as a starting point, as it only removes
  * pencils based on values in the cell's row, column, and region.
+ * <p>
+ * Existing pencils are overwritten completely in this process.
  *
  * @param row row of the cell
  * @param col column of the cell
@@ -170,7 +168,7 @@ public class SudokuSolver {
  * @param board board to solve
  * @return a solved copy of the board
  */
-  public SudokuBoard bruteForce(SudokuBoard board) {
+  public SudokuBoard bruteForceSolve(SudokuBoard board) {
     SudokuBoard newboard = new SudokuBoard();
     ArrayList<Integer> unsolved = new ArrayList<Integer>();
     for (int i = 1; i < 10; i++) {
@@ -183,7 +181,7 @@ public class SudokuSolver {
         }
       }
     }
-    int index = 0; 
+    int index = 0;
     bruteForce(newboard, unsolved, index);
     for (int i = 1; i < 10; i++) {
       for (int j = 1; j < 10; j++) {
@@ -212,6 +210,165 @@ public class SudokuSolver {
     }
   }
 
+/**
+ * Returns a solved version of the passed board.
+ * It solves the board algorithmically, square-by-square.
+ *
+ * @param board the board to solve
+ * @return solved version of board
+ */
+  public SudokuBoard solve(SudokuBoard board) {
+    SudokuBoard solvedboard = board.copyBoard();
+    algorithmicSolve(solvedboard);
+    return solvedboard;
+  }
+
+/**
+ * Attempts to solve the board with algorithms.
+ *
+ * @param board the board to solve
+ */
+  private void algorithmicSolve(SudokuBoard board) {
+    for (int i = 1; i < 10; i++) {
+      for (int j = 1; j < 10; j++) {
+        generatePencils(board, i, j);
+      }
+    }
+    while (!(isSolved(board))) {
+      //execute algorithms to solve it
+      singlePosition(board);
+      singleCandidate(board);
+    }
+  }
+
+/**
+ * Solves "Single Position" squares on the board.
+ * A Single Position occurs when a digit has only
+ * one valid place it can be in its row, column, or region.
+ *
+ * @param board the board to check
+ */
+  private void singlePosition(SudokuBoard board) {
+    //check each row
+    for (int r = 1; r < 10; r++) {
+      int[] pencount = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+      int[] cols = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+      for (int c = 1; c < 10; c++) {
+        int val = board.getValue(r, c);
+        if (val == 0) {
+          for (Integer pen : board.getPencils(r, c)) {
+            pencount[pen - 1] += 1;
+            cols[pen - 1] = c;
+          }
+        }
+      }
+      for (int val = 1; val < 10; val++) {
+        if (pencount[val - 1] == 1) {
+          board.setValue(r, cols[val - 1], val);
+          removePencils(board, r, cols[val - 1], val);
+        }
+      }
+    }
+    //check each column
+    for (int c = 1; c < 10; c++) {
+      int[] pencount = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+      int[] rows = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+      for (int r = 1; r < 10; r++) {
+        int val = board.getValue(r, c);
+        if (val == 0) {
+          for (Integer pen : board.getPencils(r, c)) {
+            pencount[pen - 1] += 1;
+            rows[pen - 1] = r;
+          }
+        }
+      }
+      for (int val = 1; val < 10; val++) {
+        if (pencount[val - 1] == 1) {
+          board.setValue(rows[val - 1], c, val);
+          removePencils(board, rows[val - 1], c, val);
+        }
+      }
+    }
+    for (int reg = 1; reg < 10; reg++) {
+      int[] startingrow = {1, 1, 1, 4, 4, 4, 7, 7, 7};
+      int[] startingcol = {1, 4, 7, 1, 4, 7, 1, 4, 7};
+      int[] pencount = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+      int[] rows = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+      int[] cols = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+      for (int row = startingrow[reg - 1];
+          row < startingrow[reg - 1]+ 3; row++) {
+        for (int col = startingcol[reg - 1];
+            col < startingrow[reg - 1] + 3; col++) {
+          int val = board.getValue(row, col);
+          if (val == 0) {
+            for (Integer pen : board.getPencils(row, col)) {
+              pencount[pen - 1] += 1;
+              rows[pen - 1] = row;
+              cols[pen - 1] = col;
+            }
+          }
+        }
+      }
+      for (int val = 1; val < 10; val++) {
+        if (pencount[val - 1] == 1) {
+          board.setValue(rows[val - 1], cols[val - 1], val);
+          removePencils(board, rows[val - 1], cols[val - 1], val);
+        }
+      }
+    }
+  }
+
+/**
+ * Solves "Single Candidate" squares on the board.
+ * A Single Candidate occurs when a square has only one possible
+ * digit.
+ *
+ * @param board the board to check
+ */
+  private void singleCandidate(SudokuBoard board) {
+    //if there is only one pencil in the square, that is the value.
+    for (int row = 1; row < 10; row++) {
+      for (int col = 1; col < 10; col++) {
+        if (board.getPencils(row, col).size() == 1 &&
+            board.getValue(row, col) == 0) {
+          int val = board.getPencils(row, col).get(0);
+          board.setValue(row, col, val);
+          removePencils(board, row, col, val);
+        }
+      }
+    }
+  }
+
+/**
+ * Removes a value from the list of pencils in the cells' row, col, and region.
+ *
+ * @param board board to use
+ * @param row row of the cell
+ * @param col column of the cell
+ * @param val value to remove from pencils
+ */
+  private void removePencils(SudokuBoard board, int row, int col, int val) {
+    //remove pencil from col
+    for (int r = 1; r < 10; r++) {
+      board.removePencil(r, col, val);
+    }
+    //remove pencil from row
+    for (int c = 1; c < 10; c++) {
+      board.removePencil(row, c, val);
+    }
+    //remove pencil from region
+    int region = board.findReg(row, col);
+    int[] startingrow = {1, 1, 1, 4, 4, 4, 7, 7, 7};
+    int[] startingcol = {1, 4, 7, 1, 4, 7, 1, 4, 7};
+    for (int r = startingrow[region - 1];
+        r < startingrow[region - 1] + 3; r++) {
+      for (int c = startingcol[region - 1];
+          c < startingcol[region - 1] + 3; c++) {
+        board.removePencil(r, c, val);
+      }
+    }
+  }
+
 /** Method for simple tests. */
   public static void main(String[] args) {
     try {
@@ -225,7 +382,7 @@ public class SudokuSolver {
       while ((puzzle = in.readLine()) != null) {
         SudokuBoard board = new SudokuBoard(puzzle);
         SudokuBoard solvedboard = new SudokuBoard();
-        solvedboard = solver.bruteForce(board);
+        solvedboard = solver.bruteForceSolve(board);
         //System.out.println(board.toPrettyString());
         //System.out.println(solvedboard.toPrettyString());
       }

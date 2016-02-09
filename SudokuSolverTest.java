@@ -95,7 +95,7 @@ public class SudokuSolverTest {
     SudokuBoard unsolvedboard = new SudokuBoard(boardstring);
     SudokuBoard solvedboard = new SudokuBoard(solvedstring);
     SudokuSolver solver = new SudokuSolver();
-    SudokuBoard compareboard = solver.bruteForce(unsolvedboard);
+    SudokuBoard compareboard = solver.bruteForceSolve(unsolvedboard);
     assertTrue(solvedboard.equals(compareboard));
   }
 }

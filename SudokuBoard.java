@@ -21,8 +21,6 @@ import java.util.NoSuchElementException;
  * .
  * .
  * (9,1) (9,2) ... (9,9)
- *
- * @version 1.2
  */
 public class SudokuBoard {
   private SudokuSquare[][] cells;
@@ -367,13 +365,26 @@ public class SudokuBoard {
   }
 
 /**
+ * Returns the region as an array of ints.
+ * This method allows specifying the reg (1-9) as opposed to
+ * a row and column specification.
+ *
+ * @param reg the region (1-9) to return
+ */
+  public int[] getReg(int reg) {
+    int[] startingrow = {1, 1, 1, 4, 4, 4, 7, 7, 7};
+    int[] startingcol = {1, 4, 7, 1, 4, 7, 1, 4, 7};
+    return getReg(startingrow[reg - 1], startingcol[reg - 1]);
+  }
+
+/**
  * Returns the region number for the cell at (row, col)
  *
  * @param row row of specified cell
  * @param col column of specified cell
  * @return the region number corresponding to the cell
  */
-  private int findReg(int row, int col) {
+  public int findReg(int row, int col) {
     if (row < 4 && col < 4) {
       return 1;
     }
@@ -400,6 +411,7 @@ public class SudokuBoard {
     }
       return 9;
   }
+
 /**
  * Throws exceptions for a bad row or column input
  *
