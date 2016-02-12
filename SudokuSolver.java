@@ -234,10 +234,12 @@ public class SudokuSolver {
         generatePencils(board, i, j);
       }
     }
-    while (!(isSolved(board))) {
+    //while (!(isSolved(board))) {
+    for (int x = 1; x < 10; x++) {
       //execute algorithms to solve it
       singlePosition(board);
       singleCandidate(board);
+      candidateLine(board);
     }
   }
 
@@ -265,6 +267,7 @@ public class SudokuSolver {
       for (int val = 1; val < 10; val++) {
         if (pencount[val - 1] == 1) {
           board.setValue(r, cols[val - 1], val);
+          board.clearPencils(r, cols[val - 1]);
           removePencils(board, r, cols[val - 1], val);
         }
       }
@@ -285,10 +288,12 @@ public class SudokuSolver {
       for (int val = 1; val < 10; val++) {
         if (pencount[val - 1] == 1) {
           board.setValue(rows[val - 1], c, val);
+          board.clearPencils(rows[val - 1], c);
           removePencils(board, rows[val - 1], c, val);
         }
       }
     }
+    //check each region
     for (int reg = 1; reg < 10; reg++) {
       int[] startingrow = {1, 1, 1, 4, 4, 4, 7, 7, 7};
       int[] startingcol = {1, 4, 7, 1, 4, 7, 1, 4, 7};
@@ -312,6 +317,7 @@ public class SudokuSolver {
       for (int val = 1; val < 10; val++) {
         if (pencount[val - 1] == 1) {
           board.setValue(rows[val - 1], cols[val - 1], val);
+          board.clearPencils(rows[val - 1], cols[val - 1]);
           removePencils(board, rows[val - 1], cols[val - 1], val);
         }
       }
@@ -333,10 +339,86 @@ public class SudokuSolver {
             board.getValue(row, col) == 0) {
           int val = board.getPencils(row, col).get(0);
           board.setValue(row, col, val);
+          board.clearPencils(row, col);
           removePencils(board, row, col, val);
         }
       }
     }
+  }
+
+/**
+ * Searches for "Candidate Lines" and removes pencils accordingly.
+ * Within a region, if a value is only a candidate in cells that
+ * fall on a line, the value can be eliminated as a possibility
+ * in other cells along the line (row/col) outside of that region.
+ *
+ * @param board the board to search
+ */
+  private void candidateLine(SudokuBoard board) {
+    for (int reg = 1; reg < 10; reg++) {
+      int[] startingrow = {1, 1, 1, 4, 4, 4, 7, 7, 7};
+      int[] startingcol = {1, 4, 7, 1, 4, 7, 1, 4, 7};
+      int[] pencilcount = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+      //make ArrayList of ArrayLists to hold pencil rows and cols
+      ArrayList<ArrayList<Integer>> penrows =
+          new ArrayList<ArrayList<Integer>>();
+      ArrayList<ArrayList<Integer>> pencols =
+          new ArrayList<ArrayList<Integer>>();
+      for (int val = 1; val < 10; val++) {
+        penrows.add(new ArrayList<Integer>());
+        pencols.add(new ArrayList<Integer>());
+      }
+      for (int row = startingrow[reg - 1];
+          row < startingrow[reg - 1] + 3; row++) {
+        for (int col = startingcol[reg - 1];
+            col < startingcol[reg - 1] + 3; col++) {
+          //Add the row and column of each pencil to the lists
+          for (Integer pen : board.getPencils(row, col)) {
+            pencilcount[pen - 1]++;
+            penrows.get(pen - 1).add((Integer)row);
+            pencols.get(pen - 1).add((Integer)col);
+          }
+        }
+      }
+      for (int val = 1; val < 10; val++) {
+        int pennumber = penrows.get(val - 1).size();
+        if (pennumber == 2 || pennumber == 3) {
+          if (areCollinear(penrows.get(val - 1))) {
+            int row = penrows.get(val - 1).get(0);
+            for (int col = 1; col < 10; col++) {
+              if (col >= startingcol[reg - 1] &&
+                  col < startingcol[reg - 1] + 3) {
+                continue;
+              }
+              board.removePencil(row, col, val);
+            }
+          }
+          if (areCollinear(pencols.get(val - 1))) {
+            int col = pencols.get(val - 1).get(0);
+            for (int row = 1; row < 10; row++) {
+              if (row >= startingrow[reg - 1] &&
+                  row < startingrow[reg - 1] + 3) {
+                continue;
+              }
+              board.removePencil(row, col, val);
+            }
+          }
+        }
+      }
+    }
+  }
+
+/**
+ * Tests an ArrayList of row or column numbers for collinearity.
+ */
+  private boolean areCollinear(ArrayList<Integer> points) {
+    int first = points.get(0);
+    for (Integer point : points) {
+      if (!(point.equals(first))) {
+        return false;
+      }
+    }
+    return true;
   }
 
 /**
