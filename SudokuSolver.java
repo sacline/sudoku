@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 
 /**
@@ -240,6 +241,7 @@ public class SudokuSolver {
       singlePosition(board);
       singleCandidate(board);
       candidateLine(board);
+      multipleLines(board);
     }
   }
 
@@ -419,6 +421,193 @@ public class SudokuSolver {
       }
     }
     return true;
+  }
+
+/**
+ * Uses "Multiple Lines" strategy to remove pencils from the board
+ *
+ * @param board board to search
+ */
+  private void multipleLines(SudokuBoard board) {
+    //loop through six times (3 times for rows, 3 times for columns)
+    //in each loop, look at the 3 region-pairs.
+    //for each region-pair, look at the values missing from both regions
+    //if they exist as pencils in only 2 (row/cols), eliminate other pencils
+
+    //region-pairs to check
+    int[] pair1 = {1, 1, 1, 1, 2, 2, 2, 3, 3, 4, 4, 4, 5, 5, 6, 7, 7, 8};
+    int[] pair2 = {2, 3, 4, 7, 3, 5, 8, 6, 9, 5, 6, 7, 6, 8, 9, 8, 9, 9};
+    int[] startingrow = {1, 1, 1, 4, 4, 4, 7, 7, 7};
+    int[] startingcol = {1, 4, 7, 1, 4, 7, 1, 4, 7};
+
+    for (int pair = 0; pair < 18; pair++) {
+      int reg1 = pair1[pair];
+      int reg2 = pair2[pair];
+
+      //row comparison
+      if ((reg2 - reg1) < 3) {
+        ArrayList<Integer> reg1remaining = regRemaining(board, reg1);
+        ArrayList<Integer> reg2remaining = regRemaining(board, reg2);
+        //change reg1remaining to the intersection of the lists
+        reg1remaining.retainAll(reg2remaining);
+
+        //for each remaining value, add pencil row to reg list
+        for (Integer rem : reg1remaining) {
+          ArrayList<Integer> reg1rows = new ArrayList<Integer>();
+          ArrayList<Integer> reg2rows = new ArrayList<Integer>();
+          for (int row = startingrow[reg1 - 1];
+              row < startingrow[reg1 - 1] + 3; row++) {
+            //check reg1 for rows containing the number
+            for (int col = startingcol[reg1 - 1];
+                col < startingcol[reg1 - 1] + 3; col++) {
+              if (board.getPencils(row, col).contains(rem)) {
+                reg1rows.add((Integer) row);
+              }
+            }
+            //check reg2 for rows containing the number
+            for (int col = startingcol[reg2 - 1];
+                col < startingcol[reg2 - 1] + 3; col++) {
+              if (board.getPencils(row, col).contains(rem)) {
+                reg2rows.add((Integer) row);
+              }
+            }
+          }
+          //check row lists to see if each list has the same two rows
+          if (multipleLinesCheck(reg1rows, reg2rows)) {
+            //take the two rows, and remove pencils from the third reg.
+            for (Integer row : new HashSet<Integer>(reg1rows)) {
+              for (int col = 1; col < 10; col++) {
+                //ignore reg1
+                if (col >= startingcol[reg1 - 1] &&
+                    col < startingcol[reg1 - 1] + 3) {
+                  continue;
+                }
+                //ignore reg2
+                if (col >= startingcol[reg2 - 1] &&
+                    col < startingcol[reg2 - 1] + 3) {
+                  continue;
+                }
+                board.removePencil(row, col, rem);
+              }
+            }
+          }
+        }
+      }
+      //col comparison
+      //needs fixing to match above
+      else {
+        ArrayList<Integer> reg1remaining = regRemaining(board, reg1);
+        ArrayList<Integer> reg2remaining = regRemaining(board, reg2);
+        //change reg1remaining to the intersection of the lists
+        reg1remaining.retainAll(reg2remaining);
+
+        //for each remaining value, add pencil row to reg list
+        for (Integer rem : reg1remaining) {
+          ArrayList<Integer> reg1cols = new ArrayList<Integer>();
+          ArrayList<Integer> reg2cols = new ArrayList<Integer>();
+          for (int col = startingcol[reg1 - 1];
+              col < startingcol[reg1 - 1] + 3; col++) {
+
+            //check reg1 for rows containing the number
+            for (int row = startingrow[reg1 - 1];
+                row < startingrow[reg1 - 1] + 3; row++) {
+              if (board.getPencils(row, col).contains(rem)) {
+                reg1cols.add((Integer) col);
+              }
+            }
+            //check reg2 for rows containing the number
+            for (int row = startingrow[reg2 - 1];
+                row < startingrow[reg2 - 1] + 3; row++) {
+              if (board.getPencils(row, col).contains(rem)) {
+                reg2cols.add((Integer) col);
+              }
+            }
+          }
+          //check row lists to see if each list has the same two rows
+          if (multipleLinesCheck(reg1cols, reg2cols)) {
+            //take the two rows, and remove pencils from the third reg.
+            for (Integer col : new HashSet<Integer>(reg1cols)) {
+              for (int row = 1; row < 10; row++) {
+                //ignore reg1
+                if (row >= startingrow[reg1 - 1] &&
+                    row < startingrow[reg1 - 1] + 3) {
+                  continue;
+                }
+                //ignore reg2
+                if (row >= startingrow[reg2 - 1] &&
+                    row < startingrow[reg2 - 1] + 3) {
+                  continue;
+                }
+                board.removePencil(row, col, rem);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+/**
+ * Checks lists of row/columns to determine if Multiple Lines conditions
+ * are met.
+ */
+  private boolean multipleLinesCheck(
+      ArrayList<Integer> list1, ArrayList<Integer> list2) {
+    HashSet<Integer> hs1 = new HashSet<Integer>(list1);
+    HashSet<Integer> hs2 = new HashSet<Integer>(list2);
+    if (hs1.equals(hs2) && hs1.size() == 2) {
+      return true;
+    }
+    else {
+    return false;
+    }
+  }
+/**
+ * Returns an ArrayList of values not yet existing in the row.
+ */
+  private ArrayList<Integer> rowRemaining(SudokuBoard board, int row) {
+    ArrayList<Integer> possible = new ArrayList<Integer>();
+    for (int val = 1; val < 10; val++) {
+      possible.add((Integer) val);
+    }
+    for (int col = 1; col < 10; col++) {
+      possible.remove((Integer)board.getValue(row, col));
+    }
+    return possible;
+  }
+
+/**
+ * Returns an ArrayList of values not yet existing in the col.
+ */
+  private ArrayList<Integer> colRemaining(SudokuBoard board, int col) {
+    ArrayList<Integer> possible = new ArrayList<Integer>();
+    for (int val = 1; val < 10; val++) {
+      possible.add((Integer) val);
+    }
+    for (int row = 1; row < 10; row++) {
+      possible.remove((Integer)board.getValue(row, col));
+    }
+    return possible;
+  }
+
+/**
+ * Returns an ArrayList of values not yet existing in the reg.
+ */
+  private ArrayList<Integer> regRemaining(SudokuBoard board, int reg) {
+    int[] startingrow = {1, 1, 1, 4, 4, 4, 7, 7, 7};
+    int[] startingcol = {1, 4, 7, 1, 4, 7, 1, 4, 7};
+    ArrayList<Integer> possible = new ArrayList<Integer>();
+    for (int val = 1; val < 10; val++) {
+      possible.add((Integer) val);
+    }
+    for (int row = startingrow[reg - 1];
+        row < startingrow[reg - 1] + 3; row++) {
+      for (int col = startingcol[reg - 1];
+          col < startingcol[reg - 1] + 3; col++) {
+        possible.remove((Integer)board.getValue(row, col));
+      }
+    }
+    return possible;
   }
 
 /**
