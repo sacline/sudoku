@@ -98,4 +98,27 @@ public class SudokuSolverTest {
     SudokuBoard compareboard = solver.bruteForceSolve(unsolvedboard);
     assertTrue(solvedboard.equals(compareboard));
   }
+
+  @Test
+  public void solveTest() {
+    ArrayList<String> puzzles = new ArrayList<String>();
+    //Single position board
+    puzzles.add("006030708030000001200000600100350006079040150500017004002000007600000080407060200");
+    //Single candidate board
+    puzzles.add("004006020007800910000000308018300200300789001009001060803000500045003600026500100");
+    //Candidate lines board
+    puzzles.add("001957063000806070769130805007261350312495786056378000108609507090710608674583000");
+    //Double pairs board (solvable by multiple lines technique)
+    puzzles.add("934060050006004923008900046800546007600010005500390062360401270470600500080000634");
+    //Multiple lines board
+    puzzles.add("009030600036014089100869035090000800010000090068090170601903002972640300003020900");
+
+    SudokuSolver solver = new SudokuSolver();
+    for (String puzzle : puzzles) {
+      SudokuBoard board = new SudokuBoard(puzzle);
+      SudokuBoard bruteforce = solver.bruteForceSolve(board);
+      SudokuBoard nonbruteforce = solver.solve(board);
+      assertTrue(bruteforce.toString().equals(nonbruteforce.toString()));
+    }
+  }
 }
