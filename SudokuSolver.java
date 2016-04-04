@@ -230,19 +230,60 @@ public class SudokuSolver {
  * @param board the board to solve
  */
   private void algorithmicSolve(SudokuBoard board) {
+    final int MAX_ITERATIONS = 20;
     for (int i = 1; i < 10; i++) {
       for (int j = 1; j < 10; j++) {
         generatePencils(board, i, j);
       }
     }
     //while (!(isSolved(board))) {
-    for (int x = 1; x < 10; x++) {
+    for (int iter = 1; iter < MAX_ITERATIONS; iter++) {
       //execute algorithms to solve it
       singlePosition(board);
       singleCandidate(board);
       candidateLine(board);
       multipleLines(board);
     }
+  }
+
+/**
+ * Rates puzzle difficulty based on methods reqiured to solve it.
+ *
+ * @param board the board to rate
+ * @return the difficulty as a string-easy, medium, or hard
+ */
+  public String difficultyFinder(SudokuBoard origboard) {
+    SudokuBoard board = origboard.copyBoard();
+    for (int i = 1; i < 10; i++) {
+      for (int j = 1; j < 10; j++) {
+        generatePencils(board, i, j);
+      }
+    }
+    final int MAX_ITERATIONS = 50;
+    String difficulty = "";
+    if (isSolved(board)) {
+      return difficulty;
+    }
+    for (int iter = 1; iter < MAX_ITERATIONS; iter++) {
+      singlePosition(board);
+      singleCandidate(board);
+    }
+    if (isSolved(board)) {
+      difficulty = "easy";
+      return difficulty;
+    }
+    for (int iter = 1; iter < MAX_ITERATIONS; iter++) {
+      singlePosition(board);
+      singleCandidate(board);
+      candidateLine(board);
+      multipleLines(board);
+    }
+    if (isSolved(board)) {
+      difficulty = "medium";
+      return difficulty;
+    }
+    difficulty = "hard";
+    return difficulty;
   }
 
 /**

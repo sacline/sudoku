@@ -384,7 +384,7 @@ public class SudokuBoard {
  * @param col column of specified cell
  * @return the region number corresponding to the cell
  */
-  public int findReg(int row, int col) {
+  public static int findReg(int row, int col) {
     if (row < 4 && col < 4) {
       return 1;
     }
