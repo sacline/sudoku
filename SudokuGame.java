@@ -59,9 +59,9 @@ public class SudokuGame extends Application {
   private Stage stage;
   private Scene gamescene;
 
-  private SudokuSolver solver;
   private SudokuBoard currentboard;
   private SudokuBoard currentsolution;
+  private SudokuSolver solver;
 
   private ArrayList<SudokuBoard> easypuzzles = new ArrayList<SudokuBoard>();
   private ArrayList<SudokuBoard> easysolutions = new ArrayList<SudokuBoard>();
@@ -70,14 +70,20 @@ public class SudokuGame extends Application {
   private ArrayList<SudokuBoard> hardpuzzles = new ArrayList<SudokuBoard>();
   private ArrayList<SudokuBoard> hardsolutions = new ArrayList<SudokuBoard>();
 
-
 /**
  * Method that launches when the game runs.
  */
   @Override
   public void start(Stage primarystage) throws IOException {
-    loadPuzzles(PUZZLE_FILENAME);
     stage = primarystage;
+    initializeGame();
+  }
+
+/**
+ * Handles actions that take place every time the game starts.
+ */
+  private void initializeGame() throws IOException {
+    loadPuzzles(PUZZLE_FILENAME);
     stage.setTitle("Sudoku");
     stage.setScene(buildMenuScene());
     stage.setResizable(false);
@@ -400,8 +406,10 @@ public class SudokuGame extends Application {
         pane.setOnMouseClicked(new EventHandler<MouseEvent>() {
           @Override
           public void handle(MouseEvent event) {
-            ((Rectangle)pane.getChildren().get(0)).setFill(Color.YELLOW);
-            selectedcell = thiscell;
+            if (selectedcell == null) {
+              ((Rectangle)pane.getChildren().get(0)).setFill(Color.YELLOW);
+              selectedcell = thiscell;
+            }
           }
         });
       }
