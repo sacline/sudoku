@@ -417,7 +417,8 @@ public class SudokuBoard {
  */
   private void validateRowCol(int index) {
       if (index < 1 || index > 9) {
-        throw new IllegalArgumentException("Rows and columns must be from 1 to 9.");
+        throw new IllegalArgumentException(
+            "Rows and columns must be from 1 to 9.");
       }
     }
 
@@ -539,11 +540,10 @@ public class SudokuBoard {
 /** Method for quick testing. */
   public static void main(String[] args) {
     try {
+      //accepts a board string as a command line argument
       BufferedReader in = new BufferedReader(new FileReader(args[0]));
       String boardstring = in.readLine();
       SudokuBoard sb = new SudokuBoard(boardstring);
-      System.out.println(sb.getPencils(1,1).size());
-      //System.out.println(sb.toPrettyString());
     } catch (FileNotFoundException e) {
       System.out.println("File not found");
       }

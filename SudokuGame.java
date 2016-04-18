@@ -191,13 +191,6 @@ public class SudokuGame extends Application {
     middle.add(newhard, 2, 1);
     middle.setHalignment(newhard, HPos.LEFT);
 
-    //loadgame is not yet implemented
-    Button loadgame = new Button("Load Game");
-    loadgame.setOnAction(null);
-    middle.add(loadgame, 1, 2);
-    middle.setHalignment(loadgame, HPos.CENTER);
-    loadgame.setVisible(false);
-
     Button exitgame = new Button("Exit Game");
     exitgame.setOnAction(new EventHandler<ActionEvent>() {
       @Override
@@ -365,7 +358,7 @@ public class SudokuGame extends Application {
     boolean editable;
 
   /**
-   * Cell object constructor.
+   * Cell constructor.
    */
     private Cell(int row, int col) {
       this.row = new Integer(row);
@@ -386,7 +379,7 @@ public class SudokuGame extends Application {
     }
 
   /**
-   * Makes the cell editable if the value is defined in the initial puzzle.
+   * Makes the cell editable if the value is not defined in the initial puzzle.
    */
     private void setEditable() {
       if (currentboard.getValue(row, col) != 0) {
@@ -440,6 +433,8 @@ public class SudokuGame extends Application {
 
   /**
    * Returns the Rectangle shape for the cell.
+   * Cells in even-numbered regions are different colors than those in
+   * odd-numbered regions
    */
     private Rectangle buildRect() {
       Color rectcolor;
@@ -487,7 +482,8 @@ public class SudokuGame extends Application {
     }
 
   /**
-   * Adds a border to the board, with a thicker border between regions.
+   * Adds a border between cells in the board, with a thicker border between
+   * regions.
    */
     private void buildPaneBorder() {
       BorderWidths bw;
@@ -495,8 +491,8 @@ public class SudokuGame extends Application {
       double rightpercent = 1;
       double bottompercent = 1;
       double leftpercent = 1;
-
       double thicksize = 5;
+
       if (row == 1 || row == 4 || row == 7) {
         toppercent = thicksize;
       }

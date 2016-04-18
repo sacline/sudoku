@@ -686,17 +686,12 @@ public class SudokuSolver {
     try {
       int counter = 0;
       BufferedReader in = new BufferedReader(new FileReader(args[0]));
-      /*BufferedWriter writer = new BufferedWriter(
-          new OutputStreamWriter(new FileOutputStream
-          ((args[0] + "_SOLVED")), "utf-8"));*/
       String puzzle;
       SudokuSolver solver = new SudokuSolver();
       while ((puzzle = in.readLine()) != null) {
         SudokuBoard board = new SudokuBoard(puzzle);
         SudokuBoard solvedboard = new SudokuBoard();
         solvedboard = solver.bruteForceSolve(board);
-        //System.out.println(board.toPrettyString());
-        //System.out.println(solvedboard.toPrettyString());
       }
     } catch(FileNotFoundException e) {
       System.out.println("File not found.");
