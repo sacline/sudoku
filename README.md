@@ -1,11 +1,30 @@
-Sudoku
+#**Sudoku**
 
-This project is a java implementation of a Sudoku game.
+##Description
 
-It is still very much a work in progress, but some planned features/functionality include:
+Java implementation of Sudoku puzzle game.
 
--Board with typical sudoku features such as penciling
+###Current features:
 
--Efficient implementation of algorithms for solving a given board (i.e. avoiding guess-and-check methods)
+* Board with ability to keep square values, pencils, and a record of moves made.
 
--GUI for user play with "hint" feature
+* Solver with brute force recursive backtracking algorithm for solving of a board. Four deterministic solving algorithms implemented.
+
+* GUI that allows the user to play Sudoku using a combination of keyboard and mouse inputs. Requires a properly formatted input file.
+
+###Planned for the future:
+
+* Optimization of brute force algorithm using deterministic algorithms.
+
+* Improvements to the UI appearance.
+
+* Additional features to the game such as checking progress midway through a puzzle, etc.
+
+* More expansive tests.
+
+##How to install
+This program requires Java as well as the [JavaFX library.](http://docs.oracle.com/javase/8/javase-clienttechnologies.htm)
+
+To run the game, compile the .java files and run SudokuGame. For example, in a UNIX terminal, navigate to the directory with the files and run:
+`javac *.java` then
+`java SudokuGame`

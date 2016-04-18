@@ -1,12 +1,12 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.ArrayDeque;
 import java.util.Collections;
+import java.util.NoSuchElementException;
 
 /**
  * Standard 9 x 9 sudoku board made from SudokuSquares.
@@ -19,12 +19,10 @@ import java.util.Collections;
  * .
  * .
  * (9,1) (9,2) ... (9,9)
- *
- * @version 1.2
  */
 public class SudokuBoard {
-
   private SudokuSquare[][] cells;
+  private ArrayDeque<Move> moves;
 
 /** Constructs an empty SudokuBoard. */
   public SudokuBoard() {
@@ -40,6 +38,7 @@ public class SudokuBoard {
  */
   public SudokuBoard(String board) {
     cells = new SudokuSquare[9][9];
+    moves = new ArrayDeque<Move>();
     if (board == null) {
       for (int i = 0; i < 9; i++) {
         for (int j = 0; j < 9; j++) {
@@ -61,12 +60,36 @@ public class SudokuBoard {
   }
 
 /**
+ * Returns a new copy of the board.
+ *
+ * @param board the board to copy
+ * @return copy of this board
+ */
+  public SudokuBoard copyBoard() {
+    SudokuBoard copy = new SudokuBoard(this.toString());
+    for (int i = 1; i < 10; i++) {
+      for (int j = 1; j < 10; j++) {
+        for (int pencil : getPencils(i, j)) {
+          copy.addPencil(i, j, pencil);
+        }
+      }
+    }
+    for (Move move : this.moves) {
+      copy.moves.add(new Move(move.row, move.col, move.value, move.change));
+    }
+    return copy;
+  }
+
+
+/**
  * Returns the value of the cell at (row, column).
  *
  * @param row row of the desired cell
  * @param col column of the desired cell
  */
   public int getValue(int row, int col) {
+    validateRowCol(row);
+    validateRowCol(col);
     return cells[row - 1][col - 1].value;
   }
 
@@ -78,6 +101,9 @@ public class SudokuBoard {
  * @param value value to set the cell
  */
   public void setValue(int row, int col, int value) {
+    validateRowCol(row);
+    validateRowCol(col);
+    moves.addFirst(new Move(row, col, getValue(row, col), "+v"));
     cells[row - 1][col - 1].setValue(value);
   }
 
@@ -88,6 +114,8 @@ public class SudokuBoard {
  * @param col column of the desired cell
  */
   public ArrayList<Integer> getPencils(int row, int col) {
+    validateRowCol(row);
+    validateRowCol(col);
     return cells[row - 1][col - 1].pencils;
   }
 
@@ -99,6 +127,9 @@ public class SudokuBoard {
  * @param value value to add to pencils
  */
   public void addPencil(int row, int col, int value) {
+    validateRowCol(row);
+    validateRowCol(col);
+    moves.addFirst(new Move(row, col, value, "+p"));
     cells[row - 1][col - 1].addPencil(value);
   }
 
@@ -110,6 +141,9 @@ public class SudokuBoard {
  * @param value value to remove from pencils
  */
   public void removePencil(int row, int col, int value) {
+    validateRowCol(row);
+    validateRowCol(col);
+    moves.addFirst(new Move(row, col, value, "-p"));
     cells[row - 1][col - 1].removePencil(value);
   }
 
@@ -120,7 +154,59 @@ public class SudokuBoard {
  * @param col column of the desired cell
  */
   public void clearPencils(int row, int col) {
+    validateRowCol(row);
+    validateRowCol(col);
+    for (int pencil : getPencils(row, col)) {
+      moves.addFirst(new Move(row, col, pencil, "-p"));
+    }
     cells[row - 1][col - 1].clearPencils();
+  }
+
+/**
+ * Reverts the most recent change to the board.
+ */
+  public void undoMove() {
+    try {
+      reverseMove(moves.removeFirst());
+    } catch (NoSuchElementException e) {
+      return;
+    }
+  }
+
+/**
+ * Returns the original board after reverting all moves.
+ *
+ * @return a copy of the board at its starting point
+ */
+  public SudokuBoard originalBoard() {
+    SudokuBoard copy = new SudokuBoard();
+    copy = copyBoard();
+    while (copy.moves.size() != 0) {
+      copy.undoMove();
+    }
+    return copy;
+  }
+
+/**
+ * Examines a move and performs the reverse operation on the board.
+ */
+  private void reverseMove(Move recentmove) {
+    switch (recentmove.change) {
+      case "+v":
+        setValue(recentmove.row, recentmove.col, recentmove.value);
+        moves.removeFirst();
+        break;
+      case "+p":
+        removePencil(recentmove.row, recentmove.col, recentmove.value);
+        moves.removeFirst();
+        break;
+      case "-p":
+        addPencil(recentmove.row, recentmove.col, recentmove.value);
+        moves.removeFirst();
+        break;
+      default:
+        System.out.println("invalid move being removed");
+    }
   }
 
 /**
@@ -128,6 +214,7 @@ public class SudokuBoard {
  *
  * @return the 81-char string
  */
+  @Override
   public String toString() {
     String string = "";
     for (int i = 0; i < 9; i++) {
@@ -164,15 +251,68 @@ public class SudokuBoard {
   }
 
 /**
+ * Compares one SudokuBoard to another.
+ *
+ * @param obj board to compare with
+ * @return true if the same, false if not
+ */
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (!(obj instanceof SudokuBoard)) {
+      return false;
+    }
+    SudokuBoard compareboard = (SudokuBoard) obj;
+    for (int i = 1; i < 10; i++) {
+      for (int j = 1; j < 10; j++) {
+        if (this.getValue(i, j) == compareboard.getValue(i, j) &&
+            this.getPencils(i, j).equals(compareboard.getPencils(i,j))) {
+          continue;
+        }
+        else {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+/**
+ * Generates a hashcode for the SudokuBoard.
+ *
+ * @return hashcode representing the board
+ */
+  @Override
+  public int hashCode() {
+    int result = 1;
+    for (int i = 1; i < 10; i++) {
+      for (int j = 1; j < 10; j++) {
+        result *= i;
+        result *= j;
+        result += Integer.valueOf(this.getValue(i, j)).hashCode();
+        for (Integer pencil : this.getPencils(i, j)) {
+          result *= 31;
+          result += pencil.hashCode();
+        }
+        result += this.getPencils(i,j).hashCode();
+      }
+    }
+    return result;
+  }
+
+/**
  * Returns the specified row as an array of ints.
  *
  * @param row row number to return from 1-9
  * @return the array of square values in specified row
  */
   public int[] getRow(int row) {
-    if (row < 1 || row > 9) {
-      throw new IllegalArgumentException("Row must be from 1 to 9.");
-    }
+    validateRowCol(row);
     int[] newrow = new int[9];
     for (int pos = 1; pos < 10; pos++) {
       newrow[pos - 1] = getValue(row, pos);
@@ -187,9 +327,7 @@ public class SudokuBoard {
  * @return the array of square values in specified column
  */
   public int[] getCol(int col) {
-    if (col < 1 || col > 9) {
-      throw new IllegalArgumentException("Column must be from 1 to 9.");
-    }
+    validateRowCol(col);
     int[] newcol = new int[9];
     for (int pos = 1; pos < 10; pos++) {
       newcol[pos - 1] = getValue(pos, col);
@@ -208,10 +346,9 @@ public class SudokuBoard {
  * @return the array of squares in specified region
  */
   public int[] getReg(int row, int col) {
+    validateRowCol(row);
+    validateRowCol(col);
     int region = findReg(row, col);
-    if (region < 1 || region > 9) {
-      throw new IllegalArgumentException("Region must be from 1 to 9");
-    }
     int[] newreg = new int[9];
     //starting rows and cols for each region
     int[] startingrow = {1, 1, 1, 4, 4, 4, 7, 7, 7};
@@ -226,13 +363,26 @@ public class SudokuBoard {
   }
 
 /**
+ * Returns the region as an array of ints.
+ * This method allows specifying the reg (1-9) as opposed to
+ * a row and column specification.
+ *
+ * @param reg the region (1-9) to return
+ */
+  public int[] getReg(int reg) {
+    int[] startingrow = {1, 1, 1, 4, 4, 4, 7, 7, 7};
+    int[] startingcol = {1, 4, 7, 1, 4, 7, 1, 4, 7};
+    return getReg(startingrow[reg - 1], startingcol[reg - 1]);
+  }
+
+/**
  * Returns the region number for the cell at (row, col)
  *
  * @param row row of specified cell
  * @param col column of specified cell
  * @return the region number corresponding to the cell
  */
-  private int findReg(int row, int col) {
+  public static int findReg(int row, int col) {
     if (row < 4 && col < 4) {
       return 1;
     }
@@ -259,8 +409,41 @@ public class SudokuBoard {
     }
       return 9;
   }
+
 /**
- * Basic building sudoku board building block.
+ * Throws exceptions for a bad row or column input
+ *
+ * @param index row or column to check
+ */
+  private void validateRowCol(int index) {
+      if (index < 1 || index > 9) {
+        throw new IllegalArgumentException(
+            "Rows and columns must be from 1 to 9.");
+      }
+    }
+
+/**
+ * Object representing a change made to the board.
+ * Each move will contain information on a change made to the board.
+ * Moves will mainly be used in keeping a record of how a board
+ * transitioned from one point to another (from unsolved to solved).
+ */
+  class Move {
+    private int row;
+    private int col;
+    private int value;
+    private String change;
+
+    private Move(int row, int col, int value, String change) {
+      this.row = row;
+      this.col = col;
+      this.value = value;
+      this.change = change;
+    }
+  }
+
+/**
+ * Basic sudoku board building block.
  * SudokuSquare is the class of objects that will make up a sudoku board.
  * Each square will be able to hold a single value as well as multiple
  * penciled values.
@@ -338,6 +521,7 @@ public class SudokuBoard {
    *
    * @return the string representation of the square's value
    */
+    @Override
     public String toString() {
       return Integer.toString(value);
     }
@@ -353,14 +537,13 @@ public class SudokuBoard {
       }
     }
   }
-
 /** Method for quick testing. */
   public static void main(String[] args) {
     try {
+      //accepts a board string as a command line argument
       BufferedReader in = new BufferedReader(new FileReader(args[0]));
       String boardstring = in.readLine();
       SudokuBoard sb = new SudokuBoard(boardstring);
-      //System.out.println(sb.toPrettyString());
     } catch (FileNotFoundException e) {
       System.out.println("File not found");
       }
