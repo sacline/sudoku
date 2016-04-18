@@ -51,7 +51,7 @@ public class SudokuGame extends Application {
 
   private final double WINDOW_WIDTH = 800;
   private final double WINDOW_HEIGHT = 600;
-  private final String PUZZLE_FILENAME = "testboards100_GAME.txt";
+  private final String PUZZLE_FILENAME = "100gamepuzzles.txt";
 
   private boolean editpencils;
   private Cell selectedcell;
