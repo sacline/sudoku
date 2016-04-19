@@ -167,14 +167,18 @@ public class SudokuSolver {
  * Backtracking method uses guess-and check brute force solution.
  *
  * @param board board to solve
+ * @param optimize if true, optimizes with deterministic methods
  * @return a solved copy of the board
  */
-  public SudokuBoard bruteForceSolve(SudokuBoard board) {
+  public SudokuBoard bruteForceSolve(SudokuBoard board, boolean optimize) {
     SudokuBoard newboard = new SudokuBoard();
     ArrayList<Integer> unsolved = new ArrayList<Integer>();
     for (int i = 1; i < 10; i++) {
       for (int j = 1; j < 10; j++) {
         newboard.setValue(i, j, board.getValue(i,j));
+        if (optimize) {
+          optimize(newboard);
+        }
         generatePencils(newboard, i, j);
         if (board.getValue(i, j) == 0) {
           //cells in the board numbered 1-81
@@ -190,6 +194,10 @@ public class SudokuSolver {
       }
     }
     return newboard;
+  }
+
+  private void optimize(SudokuBoard board) {
+    algorithmicSolve(board);
   }
 
   private void bruteForce(
@@ -238,11 +246,16 @@ public class SudokuSolver {
     }
     //while (!(isSolved(board))) {
     for (int iter = 1; iter < MAX_ITERATIONS; iter++) {
+      int initialboard = board.hashCode();
       //execute algorithms to solve it
       singlePosition(board);
       singleCandidate(board);
       candidateLine(board);
       multipleLines(board);
+      //end the loop if board is unchanged
+      if (board.hashCode() == initialboard) {
+        break;
+      }
     }
   }
 
@@ -691,7 +704,7 @@ public class SudokuSolver {
       while ((puzzle = in.readLine()) != null) {
         SudokuBoard board = new SudokuBoard(puzzle);
         SudokuBoard solvedboard = new SudokuBoard();
-        solvedboard = solver.bruteForceSolve(board);
+        solvedboard = solver.bruteForceSolve(board, true);
       }
     } catch(FileNotFoundException e) {
       System.out.println("File not found.");
