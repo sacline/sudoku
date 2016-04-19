@@ -95,7 +95,7 @@ public class SudokuSolverTest {
     SudokuBoard unsolvedboard = new SudokuBoard(boardstring);
     SudokuBoard solvedboard = new SudokuBoard(solvedstring);
     SudokuSolver solver = new SudokuSolver();
-    SudokuBoard compareboard = solver.bruteForceSolve(unsolvedboard);
+    SudokuBoard compareboard = solver.bruteForceSolve(unsolvedboard, false);
     assertTrue(solvedboard.equals(compareboard));
   }
 
@@ -116,7 +116,7 @@ public class SudokuSolverTest {
     SudokuSolver solver = new SudokuSolver();
     for (String puzzle : puzzles) {
       SudokuBoard board = new SudokuBoard(puzzle);
-      SudokuBoard bruteforce = solver.bruteForceSolve(board);
+      SudokuBoard bruteforce = solver.bruteForceSolve(board, false);
       SudokuBoard nonbruteforce = solver.solve(board);
       assertTrue(bruteforce.toString().equals(nonbruteforce.toString()));
     }
