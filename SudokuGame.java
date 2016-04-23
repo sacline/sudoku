@@ -161,6 +161,7 @@ public class SudokuGame extends Application {
     middle.setPadding(new Insets(50, 0, 0, 0));
 
     Button neweasy = new Button("Easy");
+    neweasy.setFocusTraversable(false);
     neweasy.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
@@ -172,6 +173,7 @@ public class SudokuGame extends Application {
     middle.setHalignment(neweasy, HPos.RIGHT);
 
     Button newmedium = new Button("Medium");
+    newmedium.setFocusTraversable(false);
     newmedium.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
@@ -182,6 +184,7 @@ public class SudokuGame extends Application {
     middle.setHalignment(newmedium, HPos.CENTER);
 
     Button newhard = new Button("Hard");
+    newhard.setFocusTraversable(false);
     newhard.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
@@ -192,6 +195,7 @@ public class SudokuGame extends Application {
     middle.setHalignment(newhard, HPos.LEFT);
 
     Button exitgame = new Button("Exit Game");
+    exitgame.setFocusTraversable(false);
     exitgame.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
@@ -292,6 +296,7 @@ public class SudokuGame extends Application {
     bottombox.setAlignment(Pos.CENTER);
 
     Button menubutton = new Button("Return to main menu");
+    menubutton.setFocusTraversable(false);
     menubutton.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
@@ -317,6 +322,7 @@ public class SudokuGame extends Application {
     pencilindicator.setVisible(false);
 
     Button togglepencils = new Button("Toggle Pencils");
+    togglepencils.setFocusTraversable(false);
     togglepencils.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
@@ -330,6 +336,7 @@ public class SudokuGame extends Application {
     puzzlesolved.setVisible(false);
 
     Button checkpuzzle = new Button("Check puzzle");
+    checkpuzzle.setFocusTraversable(false);
     checkpuzzle.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
