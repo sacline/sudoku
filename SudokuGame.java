@@ -235,8 +235,10 @@ public class SudokuGame extends Application {
       public void handle(KeyEvent e) {
           if (selectedcell != null) {
             int value = selectedcell.keyToInt(e);
-            selectedcell.updateCell(value);
-            selectedcell = null;
+            if (value != -1) {
+              selectedcell.updateCell(value);
+              selectedcell = null;
+            }
           }
       }
     });
@@ -415,7 +417,13 @@ public class SudokuGame extends Application {
    */
     private int keyToInt(KeyEvent event) {
       String character = event.getCharacter();
-      int value = Integer.parseInt(character);
+      int value = -1;
+      try {
+        value = Integer.parseInt(character);
+      }
+      catch(java.lang.NumberFormatException e) {
+        System.out.println("Invalid character entered. Please try again.");
+      }
       return value;
     }
 
