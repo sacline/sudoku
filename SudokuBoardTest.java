@@ -1,6 +1,7 @@
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 /**
@@ -23,13 +24,13 @@ public class SudokuBoardTest {
 
   @Test
   public void fullBoardConstructorTest() {
-    final String SOLVED_BOARD = "391286574487359126652714839875431692213967485964528713149673258538142967726895341";
-    SudokuBoard board = new SudokuBoard(SOLVED_BOARD);
+    final String solvedBoard = "391286574487359126652714839875431692213967485964528713149673258538142967726895341";
+    SudokuBoard board = new SudokuBoard(solvedBoard);
     int index = 0;
     for (int i = 1; i < 10; i++) {
       for (int j = 1; j < 10; j++) {
         assertEquals("Correct value in board",
-            String.valueOf(SOLVED_BOARD.charAt(index++)),
+            String.valueOf(solvedBoard.charAt(index++)),
             String.valueOf(board.getValue(i, j)));
       }
     }
@@ -37,20 +38,20 @@ public class SudokuBoardTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void boardLengthShortTest() {
-    final String SHORT_BOARD = "12345";
-    SudokuBoard board = new SudokuBoard(SHORT_BOARD);
+    final String shortBoard = "12345";
+    SudokuBoard board = new SudokuBoard(shortBoard);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void boardLengthLongTest() {
-    final String LONG_BOARD = "123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789";
-    SudokuBoard board = new SudokuBoard(LONG_BOARD);
+    final String longBoard = "123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789";
+    SudokuBoard board = new SudokuBoard(longBoard);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void invalidCharacterBoardTest() {
-    final String BAD_BOARD = "395+53&a959n39bo939129d$h1@h\nji@ILJ24BKL@K$KdjdjdkasBdk2k250sd90v80s3n3b353l%KJK#";
-    SudokuBoard board = new SudokuBoard(BAD_BOARD);
+    final String badBoard = "395+53&a959n39bo939129d$h1@h\nji@ILJ24BKL@K$KdjdjdkasBdk2k250sd90v80s3n3b353l%KJK#";
+    SudokuBoard board = new SudokuBoard(badBoard);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -69,8 +70,8 @@ public class SudokuBoardTest {
 
   @Test
   public void copyBoardTest() {
-    final String BOARD = "391286574487359126652714839875431692213967485964528713149673258538142967726895341";
-    SudokuBoard originalboard = new SudokuBoard(BOARD);
+    final String board = "391286574487359126652714839875431692213967485964528713149673258538142967726895341";
+    SudokuBoard originalboard = new SudokuBoard(board);
     SudokuBoard copy = originalboard.copyBoard();
     assertEquals("Board copy test failed", originalboard, copy);
     //modify original board and make sure the copy does not change
