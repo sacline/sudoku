@@ -247,14 +247,14 @@ public class SudokuSolver {
     }
     //while (!(isSolved(board))) {
     for (int iter = 1; iter < MAXIMUM_ITERATIONS; iter++) {
-      int initialboard = board.hashCode();
+      SudokuBoard initialboard = board.copyBoard();
       //execute algorithms to solve it
       singlePosition(board);
       singleCandidate(board);
       candidateLine(board);
       multipleLines(board);
       //end the loop if board is unchanged
-      if (board.hashCode() == initialboard) {
+      if (board.equals(initialboard)) {
         break;
       }
     }
