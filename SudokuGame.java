@@ -61,7 +61,7 @@ public class SudokuGame extends Application {
 
   private SudokuBoard currentBoard;
   private SudokuBoard currentSolution;
-  private SudokuSolver solver;
+  private SudokuSolver solver = new SudokuSolver();
 
   private ArrayList<SudokuBoard> easyPuzzles = new ArrayList<SudokuBoard>();
   private ArrayList<SudokuBoard> easySolutions = new ArrayList<SudokuBoard>();
@@ -93,7 +93,7 @@ public class SudokuGame extends Application {
   /**
    * Parses the puzzle input file, converting strings to boards.
    *
-   * @param filename the input file
+   * @param filename the properly-formatted input file
    */
   private void loadPuzzles(String filename) throws IOException {
     BufferedReader br = new BufferedReader((new FileReader(filename)));
@@ -120,6 +120,7 @@ public class SudokuGame extends Application {
 
   /**
    * Returns the menu scene that is generated upon launching the game.
+   * The game menu contains a title and a gridpane of buttons
    */
   private Scene buildMenuScene() {
     BorderPane root = new BorderPane();
@@ -215,11 +216,13 @@ public class SudokuGame extends Application {
 
   /**
    * Returns a new game scene.
+   * The scene contains an event handler for typed keys. This allows keyboard
+   * input to the game. The keyboard input is allowed only if a cell has first
+   * been clicked.
    *
    * @param difficulty the desired game difficulty
    */
   private Scene buildGameScene(String difficulty) {
-    solver = new SudokuSolver();
     BorderPane bp = new BorderPane();
     Scene gameScene = new Scene(bp, WINDOW_WIDTH, WINDOW_HEIGHT);
 
@@ -463,6 +466,7 @@ public class SudokuGame extends Application {
 
     /**
      * Returns the Text object representing the value in the square.
+     * This converts the board's int to a string for use in the Text.
      */
     private Text buildValue() {
       Text value = new Text(String.valueOf(currentBoard.getValue(row, col)));
@@ -493,8 +497,9 @@ public class SudokuGame extends Application {
     }
 
     /**
-     * Adds a border between cells in the board, with a thicker border between
-     * regions.
+     * Adds a border between cells in the board. 
+     * The border between regions is thicker than the border between cells
+     * of the same region.
      */
     private void buildPaneBorder() {
       double topPercent = 1;
@@ -548,6 +553,9 @@ public class SudokuGame extends Application {
 
     /**
      * Sets the visibility of value and pencil Text objects based on the board.
+     * If the cell has a value, the value is shown. If the cell has no value,
+     * but has pencils, the pencils are shown. If it has neither, the cell is
+     * empty.
      */
     private void updateVisibility() {
       if (currentBoard.getValue(row, col) != 0) {

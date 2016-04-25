@@ -177,7 +177,7 @@ public class SudokuSolver {
       for (int j = 1; j < 10; j++) {
         newBoard.setValue(i, j, board.getValue(i,j));
         if (optimize) {
-          optimize(newBoard);
+          algorithmicSolve(newBoard);
         }
         generatePencils(newBoard, i, j);
         if (board.getValue(i, j) == 0) {
@@ -196,10 +196,13 @@ public class SudokuSolver {
     return newBoard;
   }
 
-  private void optimize(SudokuBoard board) {
-    algorithmicSolve(board);
-  }
-
+  /**
+   * Private method containing the recursive backtracking algorithm.
+   *
+   * @param board board to solve
+   * @param unsolved list of cell indices (1-81) that are initially unsolved
+   * @param index position of the unsolved list to fill in
+   */
   private void bruteForce(
       SudokuBoard board, ArrayList<Integer> unsolved, int index) {
     if (isSolved(board)) {
@@ -234,7 +237,7 @@ public class SudokuSolver {
   }
 
   /**
-   * Attempts to solve the board with algorithms.
+   * Attempts to solve the board with deterministic algorithms.
    *
    * @param board the board to solve
    */
@@ -245,7 +248,6 @@ public class SudokuSolver {
         generatePencils(board, i, j);
       }
     }
-    //while (!(isSolved(board))) {
     for (int iter = 1; iter < MAXIMUM_ITERATIONS; iter++) {
       SudokuBoard initialBoard = board.copyBoard();
       //execute algorithms to solve it
@@ -253,7 +255,7 @@ public class SudokuSolver {
       singleCandidate(board);
       candidateLine(board);
       multipleLines(board);
-      //end the loop if board is unchanged
+      //end the loop if board is unchanged after an iteration
       if (board.equals(initialBoard)) {
         break;
       }
@@ -262,6 +264,10 @@ public class SudokuSolver {
 
   /**
    * Rates puzzle difficulty based on methods reqiured to solve it.
+   * Easy boards can be solved using only the single position and single
+   * candidate algorithms. Medium boards can be solved with those as well as
+   * the candidate line and multiple lines algorithms. Hard boards are those
+   * that cannot be solved by these methods alone.
    *
    * @param origboard the board to rate
    * @return the difficulty as a string-easy, medium, or hard
@@ -480,9 +486,9 @@ public class SudokuSolver {
 
   /**
    * Uses "Multiple Lines" strategy to remove pencils from the board.
-   *
-   * <p>For more information see:
+   * For more information see:
    * https://www.sudokuoftheday.com/techniques/multiple-lines
+   *
    * @param board board to search
    */
   private void multipleLines(SudokuBoard board) {
@@ -602,8 +608,11 @@ public class SudokuSolver {
   }
 
   /**
-   * Checks lists of row/columns to determine if Multiple Lines conditions
-   * are met.
+   * Determines if Multiple Lines conditions are met for a list of rows/cols.
+   *
+   * @param list1 first list to compare
+   * @param list2 second list to compare
+   * @return true if the lists are equal and of size 2
    */
   private boolean multipleLinesCheck(
       ArrayList<Integer> list1, ArrayList<Integer> list2) {
@@ -618,6 +627,10 @@ public class SudokuSolver {
 
   /**
    * Returns an ArrayList of values not yet existing in the row.
+   *
+   * @param board board to check
+   * @param row row to check
+   * @return list of numbers missing from the row
    */
   private ArrayList<Integer> rowRemaining(SudokuBoard board, int row) {
     ArrayList<Integer> possible = new ArrayList<Integer>();
@@ -632,6 +645,10 @@ public class SudokuSolver {
 
   /**
    * Returns an ArrayList of values not yet existing in the col.
+   *
+   * @param board board to check
+   * @param col column to check
+   * @return list of numbers missing from the column
    */
   private ArrayList<Integer> colRemaining(SudokuBoard board, int col) {
     ArrayList<Integer> possible = new ArrayList<Integer>();
@@ -645,7 +662,11 @@ public class SudokuSolver {
   }
 
   /**
-   * Returns an ArrayList of values not yet existing in the reg.
+   * Returns an ArrayList of values not yet existing in the region.
+   *
+   * @param board board to check
+   * @param reg region to check
+   * @return list containing the numbers missing from the region
    */
   private ArrayList<Integer> regRemaining(SudokuBoard board, int reg) {
     int[] startingRow = {1, 1, 1, 4, 4, 4, 7, 7, 7};
