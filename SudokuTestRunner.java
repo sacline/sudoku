@@ -1,11 +1,10 @@
-/**
- * Runs the classes for testing the sudoku board, and its solver.
- */
-
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
+/**
+ * Runs the classes for testing the sudoku board, and its solver.
+ */
 public class SudokuTestRunner {
 
   public static void main(String[] args) {

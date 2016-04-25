@@ -189,18 +189,18 @@ public class SudokuBoard {
   /**
    * Examines a move and performs the reverse operation on the board.
    */
-  private void reverseMove(Move recentmove) {
-    switch (recentmove.change) {
+  private void reverseMove(Move recentMove) {
+    switch (recentMove.change) {
       case "+v":
-        setValue(recentmove.row, recentmove.col, recentmove.value);
+        setValue(recentMove.row, recentMove.col, recentMove.value);
         moves.removeFirst();
         break;
       case "+p":
-        removePencil(recentmove.row, recentmove.col, recentmove.value);
+        removePencil(recentMove.row, recentMove.col, recentMove.value);
         moves.removeFirst();
         break;
       case "-p":
-        addPencil(recentmove.row, recentmove.col, recentmove.value);
+        addPencil(recentMove.row, recentMove.col, recentMove.value);
         moves.removeFirst();
         break;
       default:
@@ -311,11 +311,11 @@ public class SudokuBoard {
    */
   public int[] getRow(int row) {
     validateRowCol(row);
-    int[] newrow = new int[9];
+    int[] newRow = new int[9];
     for (int pos = 1; pos < 10; pos++) {
-      newrow[pos - 1] = getValue(row, pos);
+      newRow[pos - 1] = getValue(row, pos);
     }
-    return newrow;
+    return newRow;
   }
 
   /**
@@ -326,11 +326,11 @@ public class SudokuBoard {
    */
   public int[] getCol(int col) {
     validateRowCol(col);
-    int[] newcol = new int[9];
+    int[] newCol = new int[9];
     for (int pos = 1; pos < 10; pos++) {
-      newcol[pos - 1] = getValue(pos, col);
+      newCol[pos - 1] = getValue(pos, col);
     }
-    return newcol;
+    return newCol;
   }
 
   /**
@@ -348,17 +348,17 @@ public class SudokuBoard {
     validateRowCol(row);
     validateRowCol(col);
     int region = findReg(row, col);
-    int[] newreg = new int[9];
+    int[] newReg = new int[9];
     //starting rows and cols for each region
-    int[] startingrow = {1, 1, 1, 4, 4, 4, 7, 7, 7};
-    int[] startingcol = {1, 4, 7, 1, 4, 7, 1, 4, 7};
+    int[] startingRow = {1, 1, 1, 4, 4, 4, 7, 7, 7};
+    int[] startingCol = {1, 4, 7, 1, 4, 7, 1, 4, 7};
     for (int i = 0; i < 3; i++) {
       for (int j = 0; j < 3; j++) {
-        newreg[i * 3 + j] =
-            getValue(startingrow[region - 1] + i, startingcol[region - 1] + j);
+        newReg[i * 3 + j] =
+            getValue(startingRow[region - 1] + i, startingCol[region - 1] + j);
       }
     }
-    return newreg;
+    return newReg;
   }
 
   /**
@@ -369,9 +369,9 @@ public class SudokuBoard {
    * @param reg the region (1-9) to return
    */
   public int[] getReg(int reg) {
-    int[] startingrow = {1, 1, 1, 4, 4, 4, 7, 7, 7};
-    int[] startingcol = {1, 4, 7, 1, 4, 7, 1, 4, 7};
-    return getReg(startingrow[reg - 1], startingcol[reg - 1]);
+    int[] startingRow = {1, 1, 1, 4, 4, 4, 7, 7, 7};
+    int[] startingCol = {1, 4, 7, 1, 4, 7, 1, 4, 7};
+    return getReg(startingRow[reg - 1], startingCol[reg - 1]);
   }
 
   /**
@@ -543,8 +543,8 @@ public class SudokuBoard {
     try {
       //accepts a board string as a command line argument
       BufferedReader in = new BufferedReader(new FileReader(args[0]));
-      String boardstring = in.readLine();
-      SudokuBoard sb = new SudokuBoard(boardstring);
+      String boardString = in.readLine();
+      SudokuBoard sb = new SudokuBoard(boardString);
     } catch (FileNotFoundException e) {
       System.out.println("File not found");
     } catch (IOException e) {

@@ -94,12 +94,12 @@ public class SudokuSolver {
    */
   private boolean checkUnit(int[] unit) {
     int[] target = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-    int[] unitvalues = new int[9];
+    int[] unitValues = new int[9];
     for (int index = 0; index < 9; index++) {
-      unitvalues[index] = unit[index];
+      unitValues[index] = unit[index];
     }
-    Arrays.sort(unitvalues);
-    return Arrays.equals(unitvalues, target);
+    Arrays.sort(unitValues);
+    return Arrays.equals(unitValues, target);
   }
 
   /**
@@ -111,18 +111,18 @@ public class SudokuSolver {
    * @param value value to check
    */
   public boolean validValue(SudokuBoard board, int row, int col, int value) {
-    for (int cellvalue : board.getRow(row)) {
-      if (cellvalue == value) {
+    for (int cellValue : board.getRow(row)) {
+      if (cellValue == value) {
         return false;
       }
     }
-    for (int cellvalue : board.getCol(col)) {
-      if (cellvalue == value) {
+    for (int cellValue : board.getCol(col)) {
+      if (cellValue == value) {
         return false;
       }
     }
-    for (int cellvalue : board.getReg(row, col)) {
-      if (cellvalue == value) {
+    for (int cellValue : board.getReg(row, col)) {
+      if (cellValue == value) {
         return false;
       }
     }
@@ -143,21 +143,21 @@ public class SudokuSolver {
     if (board.getValue(row, col) != 0) {
       return;
     }
-    ArrayList<Integer> poss = new ArrayList<Integer>();
+    ArrayList<Integer> possible = new ArrayList<Integer>();
     for (int number = 1; number < 10; number++) {
-      poss.add(number);
+      possible.add(number);
     }
     for (int value : board.getRow(row)) {
-      poss.remove(Integer.valueOf(value));
+      possible.remove(Integer.valueOf(value));
     }
     for (int value : board.getCol(col)) {
-      poss.remove(Integer.valueOf(value));
+      possible.remove(Integer.valueOf(value));
     }
     for (int value : board.getReg(row, col)) {
-      poss.remove(Integer.valueOf(value));
+      possible.remove(Integer.valueOf(value));
     }
     board.clearPencils(row, col);
-    for (Integer pencil : poss) {
+    for (Integer pencil : possible) {
       board.addPencil(row, col, pencil);
     }
   }
@@ -171,15 +171,15 @@ public class SudokuSolver {
    * @return a solved copy of the board
    */
   public SudokuBoard bruteForceSolve(SudokuBoard board, boolean optimize) {
-    SudokuBoard newboard = new SudokuBoard();
+    SudokuBoard newBoard = new SudokuBoard();
     ArrayList<Integer> unsolved = new ArrayList<Integer>();
     for (int i = 1; i < 10; i++) {
       for (int j = 1; j < 10; j++) {
-        newboard.setValue(i, j, board.getValue(i,j));
+        newBoard.setValue(i, j, board.getValue(i,j));
         if (optimize) {
-          optimize(newboard);
+          optimize(newBoard);
         }
-        generatePencils(newboard, i, j);
+        generatePencils(newBoard, i, j);
         if (board.getValue(i, j) == 0) {
           //cells in the board numbered 1-81
           unsolved.add(Integer.valueOf((i - 1) * 9 + j));
@@ -187,13 +187,13 @@ public class SudokuSolver {
       }
     }
     int index = 0;
-    bruteForce(newboard, unsolved, index);
+    bruteForce(newBoard, unsolved, index);
     for (int i = 1; i < 10; i++) {
       for (int j = 1; j < 10; j++) {
-        newboard.clearPencils(i, j);
+        newBoard.clearPencils(i, j);
       }
     }
-    return newboard;
+    return newBoard;
   }
 
   private void optimize(SudokuBoard board) {
@@ -228,9 +228,9 @@ public class SudokuSolver {
    * @return solved version of board
    */
   public SudokuBoard solve(SudokuBoard board) {
-    SudokuBoard solvedboard = board.copyBoard();
-    algorithmicSolve(solvedboard);
-    return solvedboard;
+    SudokuBoard solvedBoard = board.copyBoard();
+    algorithmicSolve(solvedBoard);
+    return solvedBoard;
   }
 
   /**
@@ -247,14 +247,14 @@ public class SudokuSolver {
     }
     //while (!(isSolved(board))) {
     for (int iter = 1; iter < MAXIMUM_ITERATIONS; iter++) {
-      SudokuBoard initialboard = board.copyBoard();
+      SudokuBoard initialBoard = board.copyBoard();
       //execute algorithms to solve it
       singlePosition(board);
       singleCandidate(board);
       candidateLine(board);
       multipleLines(board);
       //end the loop if board is unchanged
-      if (board.equals(initialboard)) {
+      if (board.equals(initialBoard)) {
         break;
       }
     }
@@ -310,19 +310,19 @@ public class SudokuSolver {
   private void singlePosition(SudokuBoard board) {
     //check each row
     for (int r = 1; r < 10; r++) {
-      int[] pencount = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+      int[] penCount = {0, 0, 0, 0, 0, 0, 0, 0, 0};
       int[] cols = {0, 0, 0, 0, 0, 0, 0, 0, 0};
       for (int c = 1; c < 10; c++) {
         int val = board.getValue(r, c);
         if (val == 0) {
           for (Integer pen : board.getPencils(r, c)) {
-            pencount[pen - 1] += 1;
+            penCount[pen - 1] += 1;
             cols[pen - 1] = c;
           }
         }
       }
       for (int val = 1; val < 10; val++) {
-        if (pencount[val - 1] == 1) {
+        if (penCount[val - 1] == 1) {
           board.setValue(r, cols[val - 1], val);
           board.clearPencils(r, cols[val - 1]);
           removePencils(board, r, cols[val - 1], val);
@@ -331,19 +331,19 @@ public class SudokuSolver {
     }
     //check each column
     for (int c = 1; c < 10; c++) {
-      int[] pencount = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+      int[] penCount = {0, 0, 0, 0, 0, 0, 0, 0, 0};
       int[] rows = {0, 0, 0, 0, 0, 0, 0, 0, 0};
       for (int r = 1; r < 10; r++) {
         int val = board.getValue(r, c);
         if (val == 0) {
           for (Integer pen : board.getPencils(r, c)) {
-            pencount[pen - 1] += 1;
+            penCount[pen - 1] += 1;
             rows[pen - 1] = r;
           }
         }
       }
       for (int val = 1; val < 10; val++) {
-        if (pencount[val - 1] == 1) {
+        if (penCount[val - 1] == 1) {
           board.setValue(rows[val - 1], c, val);
           board.clearPencils(rows[val - 1], c);
           removePencils(board, rows[val - 1], c, val);
@@ -352,19 +352,19 @@ public class SudokuSolver {
     }
     //check each region
     for (int reg = 1; reg < 10; reg++) {
-      int[] startingrow = {1, 1, 1, 4, 4, 4, 7, 7, 7};
-      int[] startingcol = {1, 4, 7, 1, 4, 7, 1, 4, 7};
-      int[] pencount = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+      int[] startingRow = {1, 1, 1, 4, 4, 4, 7, 7, 7};
+      int[] startingCol = {1, 4, 7, 1, 4, 7, 1, 4, 7};
+      int[] penCount = {0, 0, 0, 0, 0, 0, 0, 0, 0};
       int[] rows = {0, 0, 0, 0, 0, 0, 0, 0, 0};
       int[] cols = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-      for (int row = startingrow[reg - 1];
-          row < startingrow[reg - 1] + 3; row++) {
-        for (int col = startingcol[reg - 1];
-            col < startingrow[reg - 1] + 3; col++) {
+      for (int row = startingRow[reg - 1];
+          row < startingRow[reg - 1] + 3; row++) {
+        for (int col = startingCol[reg - 1];
+            col < startingRow[reg - 1] + 3; col++) {
           int val = board.getValue(row, col);
           if (val == 0) {
             for (Integer pen : board.getPencils(row, col)) {
-              pencount[pen - 1] += 1;
+              penCount[pen - 1] += 1;
               rows[pen - 1] = row;
               cols[pen - 1] = col;
             }
@@ -372,7 +372,7 @@ public class SudokuSolver {
         }
       }
       for (int val = 1; val < 10; val++) {
-        if (pencount[val - 1] == 1) {
+        if (penCount[val - 1] == 1) {
           board.setValue(rows[val - 1], cols[val - 1], val);
           board.clearPencils(rows[val - 1], cols[val - 1]);
           removePencils(board, rows[val - 1], cols[val - 1], val);
@@ -413,48 +413,48 @@ public class SudokuSolver {
    */
   private void candidateLine(SudokuBoard board) {
     for (int reg = 1; reg < 10; reg++) {
-      int[] startingrow = {1, 1, 1, 4, 4, 4, 7, 7, 7};
-      int[] startingcol = {1, 4, 7, 1, 4, 7, 1, 4, 7};
-      int[] pencilcount = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+      int[] startingRow = {1, 1, 1, 4, 4, 4, 7, 7, 7};
+      int[] startingCol = {1, 4, 7, 1, 4, 7, 1, 4, 7};
+      int[] pencilCount = {0, 0, 0, 0, 0, 0, 0, 0, 0};
       //make ArrayList of ArrayLists to hold pencil rows and cols
-      ArrayList<ArrayList<Integer>> penrows =
+      ArrayList<ArrayList<Integer>> penRows =
           new ArrayList<ArrayList<Integer>>();
-      ArrayList<ArrayList<Integer>> pencols =
+      ArrayList<ArrayList<Integer>> penCols =
           new ArrayList<ArrayList<Integer>>();
       for (int val = 1; val < 10; val++) {
-        penrows.add(new ArrayList<Integer>());
-        pencols.add(new ArrayList<Integer>());
+        penRows.add(new ArrayList<Integer>());
+        penCols.add(new ArrayList<Integer>());
       }
-      for (int row = startingrow[reg - 1];
-          row < startingrow[reg - 1] + 3; row++) {
-        for (int col = startingcol[reg - 1];
-            col < startingcol[reg - 1] + 3; col++) {
+      for (int row = startingRow[reg - 1];
+          row < startingRow[reg - 1] + 3; row++) {
+        for (int col = startingCol[reg - 1];
+            col < startingCol[reg - 1] + 3; col++) {
           //Add the row and column of each pencil to the lists
           for (Integer pen : board.getPencils(row, col)) {
-            pencilcount[pen - 1]++;
-            penrows.get(pen - 1).add((Integer)row);
-            pencols.get(pen - 1).add((Integer)col);
+            pencilCount[pen - 1]++;
+            penRows.get(pen - 1).add((Integer)row);
+            penCols.get(pen - 1).add((Integer)col);
           }
         }
       }
       for (int val = 1; val < 10; val++) {
-        int pennumber = penrows.get(val - 1).size();
-        if (pennumber == 2 || pennumber == 3) {
-          if (areCollinear(penrows.get(val - 1))) {
-            int row = penrows.get(val - 1).get(0);
+        int penNumber = penRows.get(val - 1).size();
+        if (penNumber == 2 || penNumber == 3) {
+          if (areCollinear(penRows.get(val - 1))) {
+            int row = penRows.get(val - 1).get(0);
             for (int col = 1; col < 10; col++) {
-              if (col >= startingcol[reg - 1]
-                  && col < startingcol[reg - 1] + 3) {
+              if (col >= startingCol[reg - 1]
+                  && col < startingCol[reg - 1] + 3) {
                 continue;
               }
               board.removePencil(row, col, val);
             }
           }
-          if (areCollinear(pencols.get(val - 1))) {
-            int col = pencols.get(val - 1).get(0);
+          if (areCollinear(penCols.get(val - 1))) {
+            int col = penCols.get(val - 1).get(0);
             for (int row = 1; row < 10; row++) {
-              if (row >= startingrow[reg - 1]
-                  && row < startingrow[reg - 1] + 3) {
+              if (row >= startingRow[reg - 1]
+                  && row < startingRow[reg - 1] + 3) {
                 continue;
               }
               board.removePencil(row, col, val);
@@ -481,6 +481,8 @@ public class SudokuSolver {
   /**
    * Uses "Multiple Lines" strategy to remove pencils from the board.
    *
+   * <p>For more information see:
+   * https://www.sudokuoftheday.com/techniques/multiple-lines
    * @param board board to search
    */
   private void multipleLines(SudokuBoard board) {
@@ -492,8 +494,8 @@ public class SudokuSolver {
     //region-pairs to check
     int[] pair1 = {1, 1, 1, 1, 2, 2, 2, 3, 3, 4, 4, 4, 5, 5, 6, 7, 7, 8};
     int[] pair2 = {2, 3, 4, 7, 3, 5, 8, 6, 9, 5, 6, 7, 6, 8, 9, 8, 9, 9};
-    int[] startingrow = {1, 1, 1, 4, 4, 4, 7, 7, 7};
-    int[] startingcol = {1, 4, 7, 1, 4, 7, 1, 4, 7};
+    int[] startingRow = {1, 1, 1, 4, 4, 4, 7, 7, 7};
+    int[] startingCol = {1, 4, 7, 1, 4, 7, 1, 4, 7};
 
     for (int pair = 0; pair < 18; pair++) {
       int reg1 = pair1[pair];
@@ -501,27 +503,27 @@ public class SudokuSolver {
 
       //row comparison
       if ((reg2 - reg1) < 3) {
-        ArrayList<Integer> reg1remaining = regRemaining(board, reg1);
-        ArrayList<Integer> reg2remaining = regRemaining(board, reg2);
-        //change reg1remaining to the intersection of the lists
-        reg1remaining.retainAll(reg2remaining);
+        ArrayList<Integer> reg1Remaining = regRemaining(board, reg1);
+        ArrayList<Integer> reg2Remaining = regRemaining(board, reg2);
+        //change reg1Remaining to the intersection of the lists
+        reg1Remaining.retainAll(reg2Remaining);
 
         //for each remaining value, add pencil row to reg list
-        for (Integer rem : reg1remaining) {
+        for (Integer rem : reg1Remaining) {
           ArrayList<Integer> reg1rows = new ArrayList<Integer>();
           ArrayList<Integer> reg2rows = new ArrayList<Integer>();
-          for (int row = startingrow[reg1 - 1];
-              row < startingrow[reg1 - 1] + 3; row++) {
+          for (int row = startingRow[reg1 - 1];
+              row < startingRow[reg1 - 1] + 3; row++) {
             //check reg1 for rows containing the number
-            for (int col = startingcol[reg1 - 1];
-                col < startingcol[reg1 - 1] + 3; col++) {
+            for (int col = startingCol[reg1 - 1];
+                col < startingCol[reg1 - 1] + 3; col++) {
               if (board.getPencils(row, col).contains(rem)) {
                 reg1rows.add((Integer) row);
               }
             }
             //check reg2 for rows containing the number
-            for (int col = startingcol[reg2 - 1];
-                col < startingcol[reg2 - 1] + 3; col++) {
+            for (int col = startingCol[reg2 - 1];
+                col < startingCol[reg2 - 1] + 3; col++) {
               if (board.getPencils(row, col).contains(rem)) {
                 reg2rows.add((Integer) row);
               }
@@ -533,13 +535,13 @@ public class SudokuSolver {
             for (Integer row : new HashSet<Integer>(reg1rows)) {
               for (int col = 1; col < 10; col++) {
                 //ignore reg1
-                if (col >= startingcol[reg1 - 1]
-                    && col < startingcol[reg1 - 1] + 3) {
+                if (col >= startingCol[reg1 - 1]
+                    && col < startingCol[reg1 - 1] + 3) {
                   continue;
                 }
                 //ignore reg2
-                if (col >= startingcol[reg2 - 1]
-                    && col < startingcol[reg2 - 1] + 3) {
+                if (col >= startingCol[reg2 - 1]
+                    && col < startingCol[reg2 - 1] + 3) {
                   continue;
                 }
                 board.removePencil(row, col, rem);
@@ -548,28 +550,28 @@ public class SudokuSolver {
           }
         }
       } else {
-        ArrayList<Integer> reg1remaining = regRemaining(board, reg1);
-        ArrayList<Integer> reg2remaining = regRemaining(board, reg2);
-        //change reg1remaining to the intersection of the lists
-        reg1remaining.retainAll(reg2remaining);
+        ArrayList<Integer> reg1Remaining = regRemaining(board, reg1);
+        ArrayList<Integer> reg2Remaining = regRemaining(board, reg2);
+        //change reg1Remaining to the intersection of the lists
+        reg1Remaining.retainAll(reg2Remaining);
 
         //for each remaining value, add pencil row to reg list
-        for (Integer rem : reg1remaining) {
+        for (Integer rem : reg1Remaining) {
           ArrayList<Integer> reg1cols = new ArrayList<Integer>();
           ArrayList<Integer> reg2cols = new ArrayList<Integer>();
-          for (int col = startingcol[reg1 - 1];
-              col < startingcol[reg1 - 1] + 3; col++) {
+          for (int col = startingCol[reg1 - 1];
+              col < startingCol[reg1 - 1] + 3; col++) {
 
             //check reg1 for rows containing the number
-            for (int row = startingrow[reg1 - 1];
-                row < startingrow[reg1 - 1] + 3; row++) {
+            for (int row = startingRow[reg1 - 1];
+                row < startingRow[reg1 - 1] + 3; row++) {
               if (board.getPencils(row, col).contains(rem)) {
                 reg1cols.add((Integer) col);
               }
             }
             //check reg2 for rows containing the number
-            for (int row = startingrow[reg2 - 1];
-                row < startingrow[reg2 - 1] + 3; row++) {
+            for (int row = startingRow[reg2 - 1];
+                row < startingRow[reg2 - 1] + 3; row++) {
               if (board.getPencils(row, col).contains(rem)) {
                 reg2cols.add((Integer) col);
               }
@@ -581,13 +583,13 @@ public class SudokuSolver {
             for (Integer col : new HashSet<Integer>(reg1cols)) {
               for (int row = 1; row < 10; row++) {
                 //ignore reg1
-                if (row >= startingrow[reg1 - 1]
-                    && row < startingrow[reg1 - 1] + 3) {
+                if (row >= startingRow[reg1 - 1]
+                    && row < startingRow[reg1 - 1] + 3) {
                   continue;
                 }
                 //ignore reg2
-                if (row >= startingrow[reg2 - 1]
-                    && row < startingrow[reg2 - 1] + 3) {
+                if (row >= startingRow[reg2 - 1]
+                    && row < startingRow[reg2 - 1] + 3) {
                   continue;
                 }
                 board.removePencil(row, col, rem);
@@ -646,16 +648,16 @@ public class SudokuSolver {
    * Returns an ArrayList of values not yet existing in the reg.
    */
   private ArrayList<Integer> regRemaining(SudokuBoard board, int reg) {
-    int[] startingrow = {1, 1, 1, 4, 4, 4, 7, 7, 7};
-    int[] startingcol = {1, 4, 7, 1, 4, 7, 1, 4, 7};
+    int[] startingRow = {1, 1, 1, 4, 4, 4, 7, 7, 7};
+    int[] startingCol = {1, 4, 7, 1, 4, 7, 1, 4, 7};
     ArrayList<Integer> possible = new ArrayList<Integer>();
     for (int val = 1; val < 10; val++) {
       possible.add((Integer) val);
     }
-    for (int row = startingrow[reg - 1];
-        row < startingrow[reg - 1] + 3; row++) {
-      for (int col = startingcol[reg - 1];
-          col < startingcol[reg - 1] + 3; col++) {
+    for (int row = startingRow[reg - 1];
+        row < startingRow[reg - 1] + 3; row++) {
+      for (int col = startingCol[reg - 1];
+          col < startingCol[reg - 1] + 3; col++) {
         possible.remove((Integer)board.getValue(row, col));
       }
     }
@@ -681,12 +683,12 @@ public class SudokuSolver {
     }
     //remove pencil from region
     int region = board.findReg(row, col);
-    int[] startingrow = {1, 1, 1, 4, 4, 4, 7, 7, 7};
-    int[] startingcol = {1, 4, 7, 1, 4, 7, 1, 4, 7};
-    for (int r = startingrow[region - 1];
-        r < startingrow[region - 1] + 3; r++) {
-      for (int c = startingcol[region - 1];
-          c < startingcol[region - 1] + 3; c++) {
+    int[] startingRow = {1, 1, 1, 4, 4, 4, 7, 7, 7};
+    int[] startingCol = {1, 4, 7, 1, 4, 7, 1, 4, 7};
+    for (int r = startingRow[region - 1];
+        r < startingRow[region - 1] + 3; r++) {
+      for (int c = startingCol[region - 1];
+          c < startingCol[region - 1] + 3; c++) {
         board.removePencil(r, c, val);
       }
     }
@@ -701,8 +703,8 @@ public class SudokuSolver {
       SudokuSolver solver = new SudokuSolver();
       while ((puzzle = in.readLine()) != null) {
         SudokuBoard board = new SudokuBoard(puzzle);
-        SudokuBoard solvedboard = new SudokuBoard();
-        solvedboard = solver.bruteForceSolve(board, true);
+        SudokuBoard solvedBoard = new SudokuBoard();
+        solvedBoard = solver.bruteForceSolve(board, true);
       }
     } catch (FileNotFoundException e) {
       System.out.println("File not found.");
