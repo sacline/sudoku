@@ -54,29 +54,28 @@ public class SudokuGame extends Application {
   private static final double WINDOW_HEIGHT = 600;
   private static final String PUZZLE_FILENAME = "100gamepuzzles.txt";
 
-  private boolean editpencils;
-  private Cell selectedcell;
+  private boolean editPencils;
+  private Cell selectedCell;
 
   private Stage stage;
-  private Scene gamescene;
 
-  private SudokuBoard currentboard;
-  private SudokuBoard currentsolution;
+  private SudokuBoard currentBoard;
+  private SudokuBoard currentSolution;
   private SudokuSolver solver;
 
-  private ArrayList<SudokuBoard> easypuzzles = new ArrayList<SudokuBoard>();
-  private ArrayList<SudokuBoard> easysolutions = new ArrayList<SudokuBoard>();
-  private ArrayList<SudokuBoard> mediumpuzzles = new ArrayList<SudokuBoard>();
-  private ArrayList<SudokuBoard> mediumsolutions = new ArrayList<SudokuBoard>();
-  private ArrayList<SudokuBoard> hardpuzzles = new ArrayList<SudokuBoard>();
-  private ArrayList<SudokuBoard> hardsolutions = new ArrayList<SudokuBoard>();
+  private ArrayList<SudokuBoard> easyPuzzles = new ArrayList<SudokuBoard>();
+  private ArrayList<SudokuBoard> easySolutions = new ArrayList<SudokuBoard>();
+  private ArrayList<SudokuBoard> mediumPuzzles = new ArrayList<SudokuBoard>();
+  private ArrayList<SudokuBoard> mediumSolutions = new ArrayList<SudokuBoard>();
+  private ArrayList<SudokuBoard> hardPuzzles = new ArrayList<SudokuBoard>();
+  private ArrayList<SudokuBoard> hardSolutions = new ArrayList<SudokuBoard>();
 
   /**
    * Method that launches when the game runs.
    */
   @Override
-  public void start(Stage primarystage) throws IOException {
-    stage = primarystage;
+  public void start(Stage primaryStage) throws IOException {
+    stage = primaryStage;
     initializeGame();
   }
 
@@ -101,19 +100,19 @@ public class SudokuGame extends Application {
     String line;
     while ((line = br.readLine()) != null) {
       String diff = line.substring(164,165);
-      String puzzlestring = line.substring(0,81);
-      String solutionstring = line.substring(82,163);
+      String puzzleString = line.substring(0,81);
+      String solutionString = line.substring(82,163);
       if (diff.equals("e")) {
-        easypuzzles.add(new SudokuBoard(puzzlestring));
-        easysolutions.add(new SudokuBoard(solutionstring));
+        easyPuzzles.add(new SudokuBoard(puzzleString));
+        easySolutions.add(new SudokuBoard(solutionString));
       }
       if (diff.equals("m")) {
-        mediumpuzzles.add(new SudokuBoard(puzzlestring));
-        mediumsolutions.add(new SudokuBoard(solutionstring));
+        mediumPuzzles.add(new SudokuBoard(puzzleString));
+        mediumSolutions.add(new SudokuBoard(solutionString));
       }
       if (diff.equals("h")) {
-        hardpuzzles.add(new SudokuBoard(puzzlestring));
-        hardsolutions.add(new SudokuBoard(solutionstring));
+        hardPuzzles.add(new SudokuBoard(puzzleString));
+        hardSolutions.add(new SudokuBoard(solutionString));
       }
     }
     br.close();
@@ -133,19 +132,19 @@ public class SudokuGame extends Application {
     root.setAlignment(root.getBottom(), Pos.TOP_CENTER);
     root.setMargin(root.getBottom(), new Insets(0, 0, 400, 0));
 
-    Scene menuscene;
-    menuscene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
-    return menuscene;
+    Scene menuScene;
+    menuScene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
+    return menuScene;
   }
 
   /**
    * Returns the game title Text object.
    */
   private Text buildGameTitle() {
-    Text menutitle = new Text("Sudoku");
-    menutitle.setFill(Color.RED);
-    menutitle.setFont(new Font(50));
-    return menutitle;
+    Text menuTitle = new Text("Sudoku");
+    menuTitle.setFill(Color.RED);
+    menuTitle.setFont(new Font(50));
+    return menuTitle;
   }
 
   /**
@@ -154,62 +153,62 @@ public class SudokuGame extends Application {
   private GridPane buildMenu() {
     GridPane middle = new GridPane();
 
-    Text newgametitle = new Text("New Game");
-    newgametitle.setFill(Color.BLUE);
-    newgametitle.setFont(new Font(30));
-    middle.add(newgametitle, 1, 0);
-    middle.setHalignment(newgametitle, HPos.CENTER);
+    Text newGameTitle = new Text("New Game");
+    newGameTitle.setFill(Color.BLUE);
+    newGameTitle.setFont(new Font(30));
+    middle.add(newGameTitle, 1, 0);
+    middle.setHalignment(newGameTitle, HPos.CENTER);
     middle.setPadding(new Insets(50, 0, 0, 0));
 
-    Button neweasy = new Button("Easy");
-    neweasy.setFocusTraversable(false);
-    neweasy.setOnAction(new EventHandler<ActionEvent>() {
+    Button newEasy = new Button("Easy");
+    newEasy.setFocusTraversable(false);
+    newEasy.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
         stage.setScene(buildGameScene("easy"));
         stage.show();
       }
     });
-    middle.add(neweasy, 0, 1);
-    middle.setHalignment(neweasy, HPos.RIGHT);
+    middle.add(newEasy, 0, 1);
+    middle.setHalignment(newEasy, HPos.RIGHT);
 
-    Button newmedium = new Button("Medium");
-    newmedium.setFocusTraversable(false);
-    newmedium.setOnAction(new EventHandler<ActionEvent>() {
+    Button newMedium = new Button("Medium");
+    newMedium.setFocusTraversable(false);
+    newMedium.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
         stage.setScene(buildGameScene("medium"));
       }
     });
-    middle.add(newmedium, 1, 1);
-    middle.setHalignment(newmedium, HPos.CENTER);
+    middle.add(newMedium, 1, 1);
+    middle.setHalignment(newMedium, HPos.CENTER);
 
-    Button newhard = new Button("Hard");
-    newhard.setFocusTraversable(false);
-    newhard.setOnAction(new EventHandler<ActionEvent>() {
+    Button newHard = new Button("Hard");
+    newHard.setFocusTraversable(false);
+    newHard.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
         stage.setScene(buildGameScene("hard"));
       }
     });
-    middle.add(newhard, 2, 1);
-    middle.setHalignment(newhard, HPos.LEFT);
+    middle.add(newHard, 2, 1);
+    middle.setHalignment(newHard, HPos.LEFT);
 
-    Button exitgame = new Button("Exit Game");
-    exitgame.setFocusTraversable(false);
-    exitgame.setOnAction(new EventHandler<ActionEvent>() {
+    Button exitGame = new Button("Exit Game");
+    exitGame.setFocusTraversable(false);
+    exitGame.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
           Platform.exit();
       }
     });
-    middle.add(exitgame, 1, 3);
-    middle.setHalignment(exitgame, HPos.CENTER);
+    middle.add(exitGame, 1, 3);
+    middle.setHalignment(exitGame, HPos.CENTER);
     middle.setVgap(30);
 
-    ColumnConstraints column0 = new ColumnConstraints();
-    column0.setPercentWidth(50);
-    middle.getColumnConstraints().addAll(column0, column0, column0);
+    ColumnConstraints cc = new ColumnConstraints();
+    cc.setPercentWidth(50);
+    middle.getColumnConstraints().addAll(cc, cc, cc);
 
     return middle;
   }
@@ -222,7 +221,7 @@ public class SudokuGame extends Application {
   private Scene buildGameScene(String difficulty) {
     solver = new SudokuSolver();
     BorderPane bp = new BorderPane();
-    Scene gamescene = new Scene(bp, WINDOW_WIDTH, WINDOW_HEIGHT);
+    Scene gameScene = new Scene(bp, WINDOW_WIDTH, WINDOW_HEIGHT);
 
     setCurrentBoard(difficulty);
 
@@ -233,21 +232,21 @@ public class SudokuGame extends Application {
     bp.setRight(buildGameRight());
     bp.setAlignment(bp.getRight(), Pos.CENTER);
 
-    editpencils = false;
+    editPencils = false;
 
-    gamescene.setOnKeyTyped(new EventHandler<KeyEvent>() {
+    gameScene.setOnKeyTyped(new EventHandler<KeyEvent>() {
       @Override
       public void handle(KeyEvent event) {
-          if (selectedcell != null) {
-            int value = selectedcell.keyToInt(event);
+          if (selectedCell != null) {
+            int value = selectedCell.keyToInt(event);
             if (value != -1) {
-              selectedcell.updateCell(value);
-              selectedcell = null;
+              selectedCell.updateCell(value);
+              selectedCell = null;
             }
           }
       }
     });
-    return gamescene;
+    return gameScene;
   }
 
   /**
@@ -258,19 +257,19 @@ public class SudokuGame extends Application {
   private void setCurrentBoard(String difficulty) {
     Random random = new Random();
     if (difficulty == "easy") {
-      int index = random.nextInt(easypuzzles.size());
-      currentboard = easypuzzles.get(index);
-      currentsolution = easysolutions.get(index);
+      int index = random.nextInt(easyPuzzles.size());
+      currentBoard = easyPuzzles.get(index);
+      currentSolution = easySolutions.get(index);
     }
     if (difficulty == "medium") {
-      int index = random.nextInt(mediumpuzzles.size());
-      currentboard = mediumpuzzles.get(index);
-      currentsolution = mediumsolutions.get(index);
+      int index = random.nextInt(mediumPuzzles.size());
+      currentBoard = mediumPuzzles.get(index);
+      currentSolution = mediumSolutions.get(index);
     }
     if (difficulty == "hard") {
-      int index = random.nextInt(hardpuzzles.size());
-      currentboard = hardpuzzles.get(index);
-      currentsolution = hardsolutions.get(index);
+      int index = random.nextInt(hardPuzzles.size());
+      currentBoard = hardPuzzles.get(index);
+      currentSolution = hardSolutions.get(index);
     }
   }
 
@@ -279,81 +278,81 @@ public class SudokuGame extends Application {
    * Each sudoku board is a grid of Cell objects
    */
   private GridPane buildGameBoard() {
-    GridPane gameboard = new GridPane();
+    GridPane gameBoard = new GridPane();
     for (int row = 1; row < 10; row++) {
       for (int col = 1; col < 10; col++) {
-        gameboard.add(((new Cell(row, col)).getPane()), col - 1, row - 1);
+        gameBoard.add(((new Cell(row, col)).getPane()), col - 1, row - 1);
       }
     }
-    gameboard.setPadding(new Insets(0, 0, 0, 157));
-    return gameboard;
+    gameBoard.setPadding(new Insets(0, 0, 0, 157));
+    return gameBoard;
   }
 
   /**
    * Returns the bottom HBox containing the quit button.
    */
   private HBox buildGameBottom() {
-    HBox bottombox = new HBox();
-    bottombox.setAlignment(Pos.CENTER);
+    HBox bottomBox = new HBox();
+    bottomBox.setAlignment(Pos.CENTER);
 
-    Button menubutton = new Button("Return to main menu");
-    menubutton.setFocusTraversable(false);
-    menubutton.setOnAction(new EventHandler<ActionEvent>() {
+    Button menuButton = new Button("Return to main menu");
+    menuButton.setFocusTraversable(false);
+    menuButton.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
         stage.setScene(buildMenuScene());
       }
     });
-    bottombox.getChildren().addAll(menubutton);
-    bottombox.setPadding(new Insets(0, 0, 50, 0));
-    return bottombox;
+    bottomBox.getChildren().addAll(menuButton);
+    bottomBox.setPadding(new Insets(0, 0, 50, 0));
+    return bottomBox;
   }
 
   /**
    * Returns VBox on right side of game scene containing control buttons.
    */
   private VBox buildGameRight() {
-    VBox rightbox = new VBox();
-    rightbox.setAlignment(Pos.CENTER);
-    rightbox.setPadding(new Insets(0, 25, 0, 0));
-    rightbox.setSpacing(10);
+    VBox rightBox = new VBox();
+    rightBox.setAlignment(Pos.CENTER);
+    rightBox.setPadding(new Insets(0, 25, 0, 0));
+    rightBox.setSpacing(10);
 
-    Text pencilindicator = new Text("Pencils = On");
-    pencilindicator.setFill(Color.BLUE);
-    pencilindicator.setVisible(false);
+    Text pencilIndicator = new Text("Pencils = On");
+    pencilIndicator.setFill(Color.BLUE);
+    pencilIndicator.setVisible(false);
 
-    Button togglepencils = new Button("Toggle Pencils");
-    togglepencils.setFocusTraversable(false);
-    togglepencils.setOnAction(new EventHandler<ActionEvent>() {
+    Button togglePencils = new Button("Toggle Pencils");
+    togglePencils.setFocusTraversable(false);
+    togglePencils.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
-        editpencils = !editpencils;
-        pencilindicator.setVisible(editpencils);
+        editPencils = !editPencils;
+        pencilIndicator.setVisible(editPencils);
       }
     });
 
-    Text puzzlesolved = new Text();
-    puzzlesolved.setFill(Color.GREEN);
-    puzzlesolved.setVisible(false);
+    Text puzzleSolved = new Text();
+    puzzleSolved.setFill(Color.GREEN);
+    puzzleSolved.setVisible(false);
 
-    Button checkpuzzle = new Button("Check puzzle");
-    checkpuzzle.setFocusTraversable(false);
-    checkpuzzle.setOnAction(new EventHandler<ActionEvent>() {
+    Button checkPuzzle = new Button("Check puzzle");
+    checkPuzzle.setFocusTraversable(false);
+    checkPuzzle.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
-        if (solver.isSolved(currentboard)) {
-          puzzlesolved.setText("Puzzle is solved!");
-          puzzlesolved.setVisible(true);
+        if (solver.isSolved(currentBoard)) {
+          puzzleSolved.setText("Puzzle is solved!");
+          puzzleSolved.setVisible(true);
         } else {
-          puzzlesolved.setText("Puzzle not solved!");
-          puzzlesolved.setVisible(true);
+          puzzleSolved.setText("Puzzle not solved!");
+          puzzleSolved.setVisible(true);
         }
       }
     });
 
-    rightbox.getChildren().addAll(
-        pencilindicator, togglepencils, puzzlesolved, checkpuzzle);
-    return rightbox;
+    rightBox.getChildren().addAll(
+        pencilIndicator, togglePencils, puzzleSolved, checkPuzzle);
+    return rightBox;
   }
 
   /**
@@ -363,7 +362,7 @@ public class SudokuGame extends Application {
     Integer row;
     Integer col;
     StackPane pane;
-    Color origcolor;
+    Color origColor;
     boolean editable;
 
     /**
@@ -372,7 +371,7 @@ public class SudokuGame extends Application {
     private Cell(int row, int col) {
       this.row = new Integer(row);
       this.col = new Integer(col);
-      pane = new StackPane();
+      this.pane = new StackPane();
       setEditable();
       pane.getChildren().addAll(buildRect(), buildValue(), buildPencils());
       buildPaneBorder();
@@ -391,7 +390,7 @@ public class SudokuGame extends Application {
      * Makes the cell editable if value is not defined in the initial puzzle.
      */
     private void setEditable() {
-      if (currentboard.getValue(row, col) != 0) {
+      if (currentBoard.getValue(row, col) != 0) {
         editable = false;
       } else {
         editable = true;
@@ -403,13 +402,13 @@ public class SudokuGame extends Application {
      */
     private void setPaneAction() {
       if (editable) {
-        Cell thiscell = this;
+        Cell thisCell = this;
         pane.setOnMouseClicked(new EventHandler<MouseEvent>() {
           @Override
           public void handle(MouseEvent event) {
-            if (selectedcell == null) {
+            if (selectedCell == null) {
               ((Rectangle)pane.getChildren().get(0)).setFill(Color.YELLOW);
-              selectedcell = thiscell;
+              selectedCell = thisCell;
             }
           }
         });
@@ -423,6 +422,7 @@ public class SudokuGame extends Application {
      */
     private int keyToInt(KeyEvent event) {
       String character = event.getCharacter();
+      //if -1 is returned an error message will appear
       int value = -1;
       try {
         value = Integer.parseInt(character);
@@ -441,7 +441,7 @@ public class SudokuGame extends Application {
       modifyBoard(value);
       pane.getChildren().set(1, buildValue());
       updateVisibility();
-      ((Rectangle)pane.getChildren().get(0)).setFill(origcolor);
+      ((Rectangle)pane.getChildren().get(0)).setFill(origColor);
     }
 
     /**
@@ -450,22 +450,22 @@ public class SudokuGame extends Application {
      * odd-numbered regions
      */
     private Rectangle buildRect() {
-      Color rectcolor;
+      Color rectColor;
       final int dimension = 50;
       if (SudokuBoard.findReg(row, col) % 2 == 0) {
-        rectcolor = Color.AQUAMARINE;
+        rectColor = Color.AQUAMARINE;
       } else {
-        rectcolor = Color.GREEN;
+        rectColor = Color.GREEN;
       }
-      origcolor = rectcolor;
-      return (new Rectangle(dimension, dimension, rectcolor));
+      origColor = rectColor;
+      return (new Rectangle(dimension, dimension, rectColor));
     }
 
     /**
      * Returns the Text object representing the value in the square.
      */
     private Text buildValue() {
-      Text value = new Text(String.valueOf(currentboard.getValue(row, col)));
+      Text value = new Text(String.valueOf(currentBoard.getValue(row, col)));
       if (editable) {
         value.setFill(Color.RED);
       } else {
@@ -479,17 +479,17 @@ public class SudokuGame extends Application {
      * Pencils are displayed by showing and hiding of Text objects.
      */
     private GridPane buildPencils() {
-      GridPane pencilgrid = new GridPane();
+      GridPane pencilGrid = new GridPane();
       for (int row = 1; row < 4; row++) {
         for (int col = 1; col < 4; col++) {
-          Text penciltext = new Text(String.valueOf((row - 1) * 3 + col));
-          penciltext.setFill(Color.DARKGREY);
-          pencilgrid.setRowIndex(penciltext, row);
-          pencilgrid.setColumnIndex(penciltext, col);
-          pencilgrid.getChildren().add(penciltext);
+          Text pencilText = new Text(String.valueOf((row - 1) * 3 + col));
+          pencilText.setFill(Color.DARKGREY);
+          pencilGrid.setRowIndex(pencilText, row);
+          pencilGrid.setColumnIndex(pencilText, col);
+          pencilGrid.getChildren().add(pencilText);
         }
       }
-      return pencilgrid;
+      return pencilGrid;
     }
 
     /**
@@ -497,26 +497,26 @@ public class SudokuGame extends Application {
      * regions.
      */
     private void buildPaneBorder() {
-      double toppercent = 1;
-      double rightpercent = 1;
-      double bottompercent = 1;
-      double leftpercent = 1;
-      double thicksize = 5;
+      double topPercent = 1;
+      double rightPercent = 1;
+      double bottomPercent = 1;
+      double leftPercent = 1;
+      double thickSize = 5;
 
       if (row == 1 || row == 4 || row == 7) {
-        toppercent = thicksize;
+        topPercent = thickSize;
       }
       if (col == 1 || col == 4 || col == 7) {
-        leftpercent = thicksize;
+        leftPercent = thickSize;
       }
       if (row == 9) {
-        bottompercent = thicksize;
+        bottomPercent = thickSize;
       }
       if (col == 9) {
-        rightpercent = thicksize;
+        rightPercent = thickSize;
       }
       BorderWidths bw = new BorderWidths(
-          toppercent, rightpercent, bottompercent, leftpercent,
+          topPercent, rightPercent, bottomPercent, leftPercent,
           false, false, false, false);
       BorderStroke bs = new BorderStroke(
           Color.BLACK, BorderStrokeStyle.SOLID,
@@ -531,17 +531,17 @@ public class SudokuGame extends Application {
      * @param input number to update the board with
      */
     private void modifyBoard(int input) {
-      if (editpencils) {
-        if (currentboard.getPencils(row, col).contains(input)) {
-          currentboard.removePencil(row, col, input);
+      if (editPencils) {
+        if (currentBoard.getPencils(row, col).contains(input)) {
+          currentBoard.removePencil(row, col, input);
         } else {
-          currentboard.addPencil(row, col, input);
+          currentBoard.addPencil(row, col, input);
         }
       } else {
-        if (currentboard.getValue(row, col) == input) {
-          currentboard.setValue(row, col, 0);
+        if (currentBoard.getValue(row, col) == input) {
+          currentBoard.setValue(row, col, 0);
         } else {
-          currentboard.setValue(row, col, input);
+          currentBoard.setValue(row, col, input);
         }
       }
     }
@@ -550,7 +550,7 @@ public class SudokuGame extends Application {
      * Sets the visibility of value and pencil Text objects based on the board.
      */
     private void updateVisibility() {
-      if (currentboard.getValue(row, col) != 0) {
+      if (currentBoard.getValue(row, col) != 0) {
         //set value visible and pencils invisible
         for (Node node : pane.getChildren()) {
           if (node instanceof Text) {
@@ -569,7 +569,7 @@ public class SudokuGame extends Application {
           if (node instanceof GridPane) {
             //update pencil visibility
             for (Node pencil : ((GridPane)node).getChildren()) {
-              if (currentboard.getPencils(row, col).contains(
+              if (currentBoard.getPencils(row, col).contains(
                   Integer.parseInt(((Text)pencil).getText()))) {
                 pencil.setVisible(true);
               } else {
