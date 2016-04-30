@@ -1,3 +1,5 @@
+package com.github.sacline.sudoku;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -589,5 +591,8 @@ public class SudokuGame extends Application {
         }
       }
     }
+  }
+  public static void main(String[] args) {
+    launch(args);
   }
 }

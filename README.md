@@ -14,8 +14,6 @@ Java implementation of Sudoku puzzle game.
 
 ###Planned for the future:
 
-* Optimization of brute force algorithm using deterministic algorithms.
-
 * Improvements to the UI appearance.
 
 * Additional features to the game such as checking progress midway through a puzzle, etc.
@@ -23,8 +21,8 @@ Java implementation of Sudoku puzzle game.
 * More expansive tests.
 
 ##How to install
-This program requires Java as well as the [JavaFX library.](http://docs.oracle.com/javase/8/javase-clienttechnologies.htm)
 
-To run the game, compile the .java files and run SudokuGame. For example, in a UNIX terminal, navigate to the directory with the files and run:
-`javac *.java` then
-`java SudokuGame`
+This project can be built using gradle.
+
+In the top-level directory, run `build gradle` to compile, then run
+`java -jar build/libs/sudoku.jar` to open the game.
