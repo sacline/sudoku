@@ -1,6 +1,9 @@
+package com.github.sacline.sudoku;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 /**
@@ -8,28 +11,28 @@ import org.junit.Test;
  * This class tests the public methods within SudokuBoard.
  * In general, simple getters and setters are not tested.
  */
-
 public class SudokuBoardTest {
+
   @Test
   public void emptyBoardConstructorTest() {
-    SudokuBoard emptyboard = new SudokuBoard();
+    SudokuBoard emptyBoard = new SudokuBoard();
     for (int i = 1; i < 10; i++) {
       for (int j = 1; j < 10; j++) {
         assertEquals(
-            "Values of empty board must be 0", 0, emptyboard.getValue(i, j));
+            "Values of empty board must be 0", 0, emptyBoard.getValue(i, j));
       }
     }
   }
 
   @Test
   public void fullBoardConstructorTest() {
-    final String SOLVED_BOARD = "391286574487359126652714839875431692213967485964528713149673258538142967726895341";
-    SudokuBoard board = new SudokuBoard(SOLVED_BOARD);
+    final String solvedBoard = "391286574487359126652714839875431692213967485964528713149673258538142967726895341";
+    SudokuBoard board = new SudokuBoard(solvedBoard);
     int index = 0;
     for (int i = 1; i < 10; i++) {
       for (int j = 1; j < 10; j++) {
         assertEquals("Correct value in board",
-            String.valueOf(SOLVED_BOARD.charAt(index++)),
+            String.valueOf(solvedBoard.charAt(index++)),
             String.valueOf(board.getValue(i, j)));
       }
     }
@@ -37,77 +40,77 @@ public class SudokuBoardTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void boardLengthShortTest() {
-    final String SHORT_BOARD = "12345";
-    SudokuBoard board = new SudokuBoard(SHORT_BOARD);
+    final String shortBoard = "12345";
+    SudokuBoard board = new SudokuBoard(shortBoard);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void boardLengthLongTest() {
-    final String LONG_BOARD = "123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789";
-    SudokuBoard board = new SudokuBoard(LONG_BOARD);
+    final String longBoard = "123456789123456789123456789123456789123456789123456789123456789123456789123456789123456789";
+    SudokuBoard board = new SudokuBoard(longBoard);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void invalidCharacterBoardTest() {
-    final String BAD_BOARD = "395+53&a959n39bo939129d$h1@h\nji@ILJ24BKL@K$KdjdjdkasBdk2k250sd90v80s3n3b353l%KJK#";
-    SudokuBoard board = new SudokuBoard(BAD_BOARD);
+    final String badBoard = "395+53&a959n39bo939129d$h1@h\nji@ILJ24BKL@K$KdjdjdkasBdk2k250sd90v80s3n3b353l%KJK#";
+    SudokuBoard board = new SudokuBoard(badBoard);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void invalidSmallRowTest() {
-    int smallrow = -1;
+    int smallRow = -1;
     SudokuBoard board = new SudokuBoard();
-    board.getValue(smallrow, 5);
+    board.getValue(smallRow, 5);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void invalidLargeRowTest() {
-    int largerow = 10;
+    int largeRow = 10;
     SudokuBoard board = new SudokuBoard();
-    board.getValue(largerow, 5);
+    board.getValue(largeRow, 5);
   }
 
   @Test
   public void copyBoardTest() {
-    final String BOARD = "391286574487359126652714839875431692213967485964528713149673258538142967726895341";
-    SudokuBoard originalboard = new SudokuBoard(BOARD);
-    SudokuBoard copy = originalboard.copyBoard();
-    assertEquals("Board copy test failed", originalboard, copy);
+    final String board = "391286574487359126652714839875431692213967485964528713149673258538142967726895341";
+    SudokuBoard originalBoard = new SudokuBoard(board);
+    SudokuBoard copy = originalBoard.copyBoard();
+    assertEquals("Board copy test failed", originalBoard, copy);
     //modify original board and make sure the copy does not change
-    originalboard.setValue(1,1,2);
-    assertFalse(originalboard.equals(copy));
-    copy = originalboard.copyBoard();
-    assertEquals("Board copy test failed", originalboard, copy);
+    originalBoard.setValue(1,1,2);
+    assertFalse(originalBoard.equals(copy));
+    copy = originalBoard.copyBoard();
+    assertEquals("Board copy test failed", originalBoard, copy);
   }
 
   @Test
   public void boardEqualityTest() {
     String one = "391286574487359126652714839875431692213967485964528713149673258538142967726895341";
     String two = "391286574487359126652714839875431692213967485964528713149673258538142967726895341";
-    SudokuBoard boardone = new SudokuBoard(one);
-    SudokuBoard boardtwo = new SudokuBoard(two);
-    assertEquals("Two of the same boards are not equal", boardone, boardtwo);
+    SudokuBoard boardOne = new SudokuBoard(one);
+    SudokuBoard boardTwo = new SudokuBoard(two);
+    assertEquals("Two of the same boards are not equal", boardOne, boardTwo);
     assertEquals("Two of the same boards are not equal",
-        boardone.hashCode(), boardtwo.hashCode());
-    boardone.setValue(1, 1, 2);
-    boardtwo.setValue(1, 1, 2);
-    assertEquals("Two of the same boards are not equal", boardone, boardtwo);
+        boardOne.hashCode(), boardTwo.hashCode());
+    boardOne.setValue(1, 1, 2);
+    boardTwo.setValue(1, 1, 2);
+    assertEquals("Two of the same boards are not equal", boardOne, boardTwo);
     assertEquals("Two of the same boards are not equal",
-        boardone.hashCode(), boardtwo.hashCode());
-    boardone.addPencil(1, 1, 5);
-    boardtwo.addPencil(1, 1, 5);
-    assertEquals("Two of the same boards are not equal", boardone, boardtwo);
+        boardOne.hashCode(), boardTwo.hashCode());
+    boardOne.addPencil(1, 1, 5);
+    boardTwo.addPencil(1, 1, 5);
+    assertEquals("Two of the same boards are not equal", boardOne, boardTwo);
     assertEquals("Two of the same boards are not equal",
-        boardone.hashCode(), boardtwo.hashCode());
+        boardOne.hashCode(), boardTwo.hashCode());
   }
 
   @Test
   public void boardUndoMoveTest() {
-    String boardstring = "391286574487359126652714839875431692213967485964528713149673258538142967726895341";
-    SudokuBoard board = new SudokuBoard(boardstring);
+    String boardString = "391286574487359126652714839875431692213967485964528713149673258538142967726895341";
+    SudokuBoard board = new SudokuBoard(boardString);
     board.setValue(1, 1, 2);
     board.undoMove();
-    assertEquals(board.toString(), boardstring);
+    assertEquals(board.toString(), boardString);
     board.addPencil(1, 1, 5);
     board.undoMove();
     assertTrue(board.getPencils(1, 1).size() == 0);
@@ -131,15 +134,15 @@ public class SudokuBoardTest {
 
   @Test
   public void originalBoardTest() {
-    String boardstring = "391286574487359126652714839875431692213967485964528713149673258538142967726895341";
-    SudokuBoard board = new SudokuBoard(boardstring);
+    String boardString = "391286574487359126652714839875431692213967485964528713149673258538142967726895341";
+    SudokuBoard board = new SudokuBoard(boardString);
     board.setValue(1, 1, 5);
     board.setValue(3, 5, 8);
     board.setValue(1, 2, 9);
     board.setValue(5, 7, 9);
     SudokuBoard original = board.originalBoard();
-    assertEquals(original.toString(), boardstring);
+    assertEquals(original.toString(), boardString);
     board = board.originalBoard();
-    assertEquals(board.toString(), boardstring);
+    assertEquals(board.toString(), boardString);
   }
 }
