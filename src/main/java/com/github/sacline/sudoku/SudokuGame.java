@@ -41,8 +41,11 @@ import javafx.stage.Stage;
 
 import java.awt.event.KeyListener;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.io.IOException;
+import java.lang.ClassLoader;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
@@ -98,7 +101,8 @@ public class SudokuGame extends Application {
    * @param filename the properly-formatted input file
    */
   private void loadPuzzles(String filename) throws IOException {
-    BufferedReader br = new BufferedReader((new FileReader(filename)));
+    BufferedReader br = new BufferedReader(new InputStreamReader(
+        ClassLoader.getSystemClassLoader().getResourceAsStream(filename)));
     String line;
     while ((line = br.readLine()) != null) {
       String diff = line.substring(164,165);
