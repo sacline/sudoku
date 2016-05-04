@@ -592,6 +592,7 @@ public class SudokuGame extends Application {
       }
     }
   }
+
   public static void main(String[] args) {
     launch(args);
   }
