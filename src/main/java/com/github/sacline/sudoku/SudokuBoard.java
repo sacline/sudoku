@@ -190,6 +190,8 @@ public class SudokuBoard {
 
   /**
    * Examines a move and performs the reverse operation on the board.
+   * The reversal creates an additional move on the board which is removed
+   * after the reversal.
    */
   private void reverseMove(Move recentMove) {
     switch (recentMove.change) {
