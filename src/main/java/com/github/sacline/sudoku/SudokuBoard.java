@@ -89,8 +89,8 @@ public class SudokuBoard {
    * @param col column of the desired cell
    */
   public int getValue(int row, int col) {
-    validateRowCol(row);
-    validateRowCol(col);
+    validateRowColReg(row);
+    validateRowColReg(col);
     return cells[row - 1][col - 1].value;
   }
 
@@ -102,8 +102,8 @@ public class SudokuBoard {
    * @param value value to set the cell
    */
   public void setValue(int row, int col, int value) {
-    validateRowCol(row);
-    validateRowCol(col);
+    validateRowColReg(row);
+    validateRowColReg(col);
     moves.addFirst(new Move(row, col, getValue(row, col), "+v"));
     cells[row - 1][col - 1].setValue(value);
   }
@@ -115,8 +115,8 @@ public class SudokuBoard {
    * @param col column of the desired cell
    */
   public ArrayList<Integer> getPencils(int row, int col) {
-    validateRowCol(row);
-    validateRowCol(col);
+    validateRowColReg(row);
+    validateRowColReg(col);
     return cells[row - 1][col - 1].pencils;
   }
 
@@ -128,8 +128,8 @@ public class SudokuBoard {
    * @param value value to add to pencils
    */
   public void addPencil(int row, int col, int value) {
-    validateRowCol(row);
-    validateRowCol(col);
+    validateRowColReg(row);
+    validateRowColReg(col);
     moves.addFirst(new Move(row, col, value, "+p"));
     cells[row - 1][col - 1].addPencil(value);
   }
@@ -142,8 +142,8 @@ public class SudokuBoard {
    * @param value value to remove from pencils
    */
   public void removePencil(int row, int col, int value) {
-    validateRowCol(row);
-    validateRowCol(col);
+    validateRowColReg(row);
+    validateRowColReg(col);
     moves.addFirst(new Move(row, col, value, "-p"));
     cells[row - 1][col - 1].removePencil(value);
   }
@@ -155,8 +155,8 @@ public class SudokuBoard {
    * @param col column of the desired cell
    */
   public void clearPencils(int row, int col) {
-    validateRowCol(row);
-    validateRowCol(col);
+    validateRowColReg(row);
+    validateRowColReg(col);
     for (int pencil : getPencils(row, col)) {
       moves.addFirst(new Move(row, col, pencil, "-p"));
     }
@@ -314,7 +314,7 @@ public class SudokuBoard {
    * @return the array of square values in specified row
    */
   public int[] getRow(int row) {
-    validateRowCol(row);
+    validateRowColReg(row);
     int[] newRow = new int[9];
     for (int pos = 1; pos < 10; pos++) {
       newRow[pos - 1] = getValue(row, pos);
@@ -329,7 +329,7 @@ public class SudokuBoard {
    * @return the array of square values in specified column
    */
   public int[] getCol(int col) {
-    validateRowCol(col);
+    validateRowColReg(col);
     int[] newCol = new int[9];
     for (int pos = 1; pos < 10; pos++) {
       newCol[pos - 1] = getValue(pos, col);
@@ -349,8 +349,8 @@ public class SudokuBoard {
    * @return the array of squares in specified region
    */
   public int[] getReg(int row, int col) {
-    validateRowCol(row);
-    validateRowCol(col);
+    validateRowColReg(row);
+    validateRowColReg(col);
     int region = findReg(row, col);
     int[] newReg = new int[9];
     //starting rows and cols for each region
@@ -373,6 +373,7 @@ public class SudokuBoard {
    * @param reg the region (1-9) to return
    */
   public int[] getReg(int reg) {
+    validateRowColReg(reg);
     int[] startingRow = {1, 1, 1, 4, 4, 4, 7, 7, 7};
     int[] startingCol = {1, 4, 7, 1, 4, 7, 1, 4, 7};
     return getReg(startingRow[reg - 1], startingCol[reg - 1]);
@@ -386,19 +387,21 @@ public class SudokuBoard {
    * @return the region number corresponding to the cell
    */
   public static int findReg(int row, int col) {
+    validateRowColReg(row);
+    validateRowColReg(col);
     int region = 1 + (3 * ((row - 1) / 3)) + ((col - 1) / 3);
     return region;
   }
 
   /**
-   * Throws exceptions for a bad row or column input.
+   * Throws exceptions for a bad row, column, or region input.
    *
-   * @param index row or column to check
+   * @param index row, column, or region to check
    */
-  private void validateRowCol(int index) {
+  private static void validateRowColReg(int index) {
     if (index < 1 || index > 9) {
       throw new IllegalArgumentException(
-          "Rows and columns must be from 1 to 9.");
+          "Row, column, and region arguments must be 1 to 9 inclusive.");
     }
   }
 
