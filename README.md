@@ -27,7 +27,7 @@ This project can be built using gradle.
 In the top-level directory, run `gradle build` to compile, then run
 `java -jar build/libs/sudoku.jar` to open the game.
 
-## GUI screenshot:
+## GUI screenshot
 
 The screenshot below shows the board with the original puzzle values in black. Values input by the user are shown in red and penciled numbers are shown in grey.
 
