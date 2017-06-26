@@ -33,7 +33,7 @@ public class SudokuBoard {
 
   /**
    * Primary SudokuBoard constructor.
-   * Input may be null, which will create an empty board.
+   * Parameter may be null, which creates an empty board.
    * It also handles a string representing a board.
    *
    * @param board 81-character string representing a sudoku board.
@@ -149,7 +149,7 @@ public class SudokuBoard {
   }
 
   /**
-   * Clear all pencils from the cell at (row, column).
+   * Clears all pencils from the cell at (row, column).
    *
    * @param row row of the desired cell
    * @param col column of the desired cell
@@ -427,9 +427,9 @@ public class SudokuBoard {
 
   /**
    * Object representing a change made to the board.
-   * Each move will contain information on a change made to the board.
-   * Moves will mainly be used in keeping a record of how a board
-   * transitioned from one point to another (from unsolved to solved).
+   * Each move contains information on a change made to the board. Moves are
+   * primarily used to keep a record of how a board transitioned from one state
+   * to another.
    */
   class Move {
     private int row;
@@ -447,9 +447,8 @@ public class SudokuBoard {
 
   /**
    * Basic sudoku board building block.
-   * SudokuSquare is the class of objects that will make up a sudoku board.
-   * Each square will be able to hold a single value as well as multiple
-   * penciled values.
+   * SudokuSquare is the class for objects that make up a SudokuBoard. Each
+   * square holds a single value as well as multiple penciled values.
    */
   class SudokuSquare {
     private ArrayList<Integer> pencils;
@@ -521,7 +520,7 @@ public class SudokuBoard {
     }
 
     /**
-     * Allows SudokuSquares to be printable with println.
+     * Returns SudokuSquare string representation.
      *
      * @return the string representation of the square's value
      */
