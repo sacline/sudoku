@@ -287,6 +287,7 @@ public final class SudokuSolver {
     if (isSolved(board)) {
       return difficulty;
     }
+
     for (int iter = 1; iter < MAXIMUM_ITERATIONS; iter++) {
       singlePosition(board);
       singleCandidate(board);
@@ -295,6 +296,7 @@ public final class SudokuSolver {
       difficulty = "easy";
       return difficulty;
     }
+
     for (int iter = 1; iter < MAXIMUM_ITERATIONS; iter++) {
       singlePosition(board);
       singleCandidate(board);
@@ -305,6 +307,7 @@ public final class SudokuSolver {
       difficulty = "medium";
       return difficulty;
     }
+
     difficulty = "hard";
     return difficulty;
   }
