@@ -19,12 +19,13 @@ import java.util.Iterator;
  * squares satisfy the "One Rule": each row, column, and region must contain
  * the digits 1-9 exactly once.
  */
-public class SudokuSolver {
+public final class SudokuSolver {
 
   /**
    * Default constructor.
+   * Constructor is private because all members are static.
    */
-  public SudokuSolver() {
+  private SudokuSolver() {
   }
 
   /**
@@ -35,7 +36,7 @@ public class SudokuSolver {
    * @param board board to check
    * @return true if solved, false if not
    */
-  public boolean isSolved(SudokuBoard board) {
+  public static boolean isSolved(SudokuBoard board) {
     return (checkRows(board) && checkCols(board) && checkRegs(board));
   }
 
@@ -45,7 +46,7 @@ public class SudokuSolver {
    * @param board board to check
    * @return true if rows are correct, false if not
    */
-  public boolean checkRows(SudokuBoard board) {
+  public static boolean checkRows(SudokuBoard board) {
     for (int index = 1; index < 10; index++) {
       if (checkUnit(board.getRow(index)) == false) {
         return false;
@@ -60,7 +61,7 @@ public class SudokuSolver {
    * @param board board to check
    * @return true if columns are correct, false if not
    */
-  public boolean checkCols(SudokuBoard board) {
+  public static boolean checkCols(SudokuBoard board) {
     for (int index = 1; index < 10; index++) {
       if (checkUnit(board.getCol(index)) == false) {
         return false;
@@ -75,7 +76,7 @@ public class SudokuSolver {
    * @param board board to check
    * @return true if regions are correct, false if not
    */
-  public boolean checkRegs(SudokuBoard board) {
+  public static boolean checkRegs(SudokuBoard board) {
     for (int row = 1; row < 10; row += 3) {
       for (int col = 1; col < 10; col += 3) {
         if (checkUnit(board.getReg(row, col)) == false) {
@@ -94,7 +95,7 @@ public class SudokuSolver {
    * @param unit array of square values to check
    * @return true if the unit is complete and correct, false if not
    */
-  private boolean checkUnit(int[] unit) {
+  private static boolean checkUnit(int[] unit) {
     int[] target = {1, 2, 3, 4, 5, 6, 7, 8, 9};
     int[] unitValues = new int[9];
     for (int index = 0; index < 9; index++) {
@@ -112,7 +113,7 @@ public class SudokuSolver {
    * @param col column of cell
    * @param value value to check
    */
-  public boolean validValue(SudokuBoard board, int row, int col, int value) {
+  public static boolean validValue(SudokuBoard board, int row, int col, int value) {
     for (int cellValue : board.getRow(row)) {
       if (cellValue == value) {
         return false;
@@ -141,7 +142,7 @@ public class SudokuSolver {
    * @param row row of the cell
    * @param col column of the cell
    */
-  public void generatePencils(SudokuBoard board, int row, int col) {
+  public static void generatePencils(SudokuBoard board, int row, int col) {
     if (board.getValue(row, col) != 0) {
       return;
     }
@@ -172,7 +173,7 @@ public class SudokuSolver {
    * @param optimize if true, optimizes with deterministic methods
    * @return a solved copy of the board
    */
-  public SudokuBoard bruteForceSolve(SudokuBoard board, boolean optimize) {
+  public static SudokuBoard bruteForceSolve(SudokuBoard board, boolean optimize) {
     SudokuBoard newBoard = new SudokuBoard();
     ArrayList<Integer> unsolved = new ArrayList<Integer>();
     for (int i = 1; i < 10; i++) {
@@ -205,7 +206,7 @@ public class SudokuSolver {
    * @param unsolved list of cell indices (1-81) that are initially unsolved
    * @param index position of the unsolved list to fill in
    */
-  private void bruteForce(
+  private static void bruteForce(
       SudokuBoard board, ArrayList<Integer> unsolved, int index) {
     if (isSolved(board)) {
       return;
@@ -232,7 +233,7 @@ public class SudokuSolver {
    * @param board the board to solve
    * @return solved version of board
    */
-  public SudokuBoard solve(SudokuBoard board) {
+  public static SudokuBoard solve(SudokuBoard board) {
     SudokuBoard solvedBoard = board.copyBoard();
     algorithmicSolve(solvedBoard);
     return solvedBoard;
@@ -243,7 +244,7 @@ public class SudokuSolver {
    *
    * @param board the board to solve
    */
-  private void algorithmicSolve(SudokuBoard board) {
+  private static void algorithmicSolve(SudokuBoard board) {
     final int MAXIMUM_ITERATIONS = 20;
     for (int i = 1; i < 10; i++) {
       for (int j = 1; j < 10; j++) {
@@ -274,7 +275,7 @@ public class SudokuSolver {
    * @param origboard the board to rate
    * @return the difficulty as a string-easy, medium, or hard
    */
-  public String difficultyFinder(SudokuBoard origboard) {
+  public static String difficultyFinder(SudokuBoard origboard) {
     SudokuBoard board = origboard.copyBoard();
     for (int i = 1; i < 10; i++) {
       for (int j = 1; j < 10; j++) {
@@ -315,7 +316,7 @@ public class SudokuSolver {
    *
    * @param board the board to check
    */
-  private void singlePosition(SudokuBoard board) {
+  private static void singlePosition(SudokuBoard board) {
     //check each row
     for (int r = 1; r < 10; r++) {
       int[] penCount = {0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -396,7 +397,7 @@ public class SudokuSolver {
    *
    * @param board the board to check
    */
-  private void singleCandidate(SudokuBoard board) {
+  private static void singleCandidate(SudokuBoard board) {
     //if there is only one pencil in the square, that is the value.
     for (int row = 1; row < 10; row++) {
       for (int col = 1; col < 10; col++) {
@@ -419,7 +420,7 @@ public class SudokuSolver {
    *
    * @param board the board to search
    */
-  private void candidateLine(SudokuBoard board) {
+  private static void candidateLine(SudokuBoard board) {
     for (int reg = 1; reg < 10; reg++) {
       int[] startingRow = {1, 1, 1, 4, 4, 4, 7, 7, 7};
       int[] startingCol = {1, 4, 7, 1, 4, 7, 1, 4, 7};
@@ -476,7 +477,7 @@ public class SudokuSolver {
   /**
    * Tests an ArrayList of row or column numbers for collinearity.
    */
-  private boolean areCollinear(ArrayList<Integer> points) {
+  private static boolean areCollinear(ArrayList<Integer> points) {
     int first = points.get(0);
     for (Integer point : points) {
       if (!(point.equals(first))) {
@@ -493,7 +494,7 @@ public class SudokuSolver {
    *
    * @param board board to search
    */
-  private void multipleLines(SudokuBoard board) {
+  private static void multipleLines(SudokuBoard board) {
     //loop through six times (3 times for rows, 3 times for columns)
     //in each loop, look at the 3 region-pairs.
     //for each region-pair, look at the values missing from both regions
@@ -616,7 +617,7 @@ public class SudokuSolver {
    * @param list2 second list to compare
    * @return true if the lists are equal and of size 2
    */
-  private boolean multipleLinesCheck(
+  private static boolean multipleLinesCheck(
       ArrayList<Integer> list1, ArrayList<Integer> list2) {
     HashSet<Integer> hs1 = new HashSet<Integer>(list1);
     HashSet<Integer> hs2 = new HashSet<Integer>(list2);
@@ -634,7 +635,7 @@ public class SudokuSolver {
    * @param row row to check
    * @return list of numbers missing from the row
    */
-  private ArrayList<Integer> rowRemaining(SudokuBoard board, int row) {
+  private static ArrayList<Integer> rowRemaining(SudokuBoard board, int row) {
     ArrayList<Integer> possible = new ArrayList<Integer>();
     for (int val = 1; val < 10; val++) {
       possible.add((Integer) val);
@@ -652,7 +653,7 @@ public class SudokuSolver {
    * @param col column to check
    * @return list of numbers missing from the column
    */
-  private ArrayList<Integer> colRemaining(SudokuBoard board, int col) {
+  private static ArrayList<Integer> colRemaining(SudokuBoard board, int col) {
     ArrayList<Integer> possible = new ArrayList<Integer>();
     for (int val = 1; val < 10; val++) {
       possible.add((Integer) val);
@@ -670,7 +671,7 @@ public class SudokuSolver {
    * @param reg region to check
    * @return list containing the numbers missing from the region
    */
-  private ArrayList<Integer> regRemaining(SudokuBoard board, int reg) {
+  private static ArrayList<Integer> regRemaining(SudokuBoard board, int reg) {
     int[] startingRow = {1, 1, 1, 4, 4, 4, 7, 7, 7};
     int[] startingCol = {1, 4, 7, 1, 4, 7, 1, 4, 7};
     ArrayList<Integer> possible = new ArrayList<Integer>();
@@ -695,7 +696,7 @@ public class SudokuSolver {
    * @param col column of the cell
    * @param val value to remove from pencils
    */
-  private void removePencils(SudokuBoard board, int row, int col, int val) {
+  private static void removePencils(SudokuBoard board, int row, int col, int val) {
     //remove pencil from col
     for (int r = 1; r < 10; r++) {
       board.removePencil(r, col, val);
@@ -723,11 +724,10 @@ public class SudokuSolver {
       int counter = 0;
       BufferedReader in = new BufferedReader(new FileReader(args[0]));
       String puzzle;
-      SudokuSolver solver = new SudokuSolver();
       while ((puzzle = in.readLine()) != null) {
         SudokuBoard board = new SudokuBoard(puzzle);
         SudokuBoard solvedBoard = new SudokuBoard();
-        solvedBoard = solver.bruteForceSolve(board, true);
+        solvedBoard = SudokuSolver.bruteForceSolve(board, true);
       }
     } catch (FileNotFoundException e) {
       System.out.println("File not found.");

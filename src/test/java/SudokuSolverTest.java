@@ -17,75 +17,69 @@ public class SudokuSolverTest {
   public void checkRowsTest() {
     String solvedString = "391286574487359126652714839875431692213967485964528713149673258538142967726895341";
     SudokuBoard board = new SudokuBoard(solvedString);
-    SudokuSolver solver = new SudokuSolver();
-    assertTrue(solver.checkRows(board));
+    assertTrue(SudokuSolver.checkRows(board));
     board.setValue(1,1,4); //changes a value so next call is false
-    assertFalse(solver.checkRows(board));
+    assertFalse(SudokuSolver.checkRows(board));
     board.setValue(1,1,3); //changes value back to original value
-    assertTrue(solver.checkRows(board));
+    assertTrue(SudokuSolver.checkRows(board));
   }
 
   @Test
   public void checkColsTest() {
     String solvedString = "391286574487359126652714839875431692213967485964528713149673258538142967726895341";
     SudokuBoard board = new SudokuBoard(solvedString);
-    SudokuSolver solver = new SudokuSolver();
-    assertTrue(solver.checkCols(board));
+    assertTrue(SudokuSolver.checkCols(board));
     board.setValue(1,1,4); //changes a value so next call is false
-    assertFalse(solver.checkCols(board));
+    assertFalse(SudokuSolver.checkCols(board));
     board.setValue(1,1,3); //changes value back to original value
-    assertTrue(solver.checkCols(board));
+    assertTrue(SudokuSolver.checkCols(board));
   }
 
   @Test
   public void checkRegsTest() {
     String solvedString = "391286574487359126652714839875431692213967485964528713149673258538142967726895341";
     SudokuBoard board = new SudokuBoard(solvedString);
-    SudokuSolver solver = new SudokuSolver();
-    assertTrue(solver.checkRegs(board));
+    assertTrue(SudokuSolver.checkRegs(board));
     board.setValue(1,1,4); //changes a value so next call is false
-    assertFalse(solver.checkRegs(board));
+    assertFalse(SudokuSolver.checkRegs(board));
     board.setValue(1,1,3); //changes value back to original value
-    assertTrue(solver.checkRegs(board));
+    assertTrue(SudokuSolver.checkRegs(board));
   }
 
   @Test
   public void isSolvedTest() {
     String solvedString = "391286574487359126652714839875431692213967485964528713149673258538142967726895341";
     SudokuBoard board = new SudokuBoard(solvedString);
-    SudokuSolver solver = new SudokuSolver();
-    assertTrue(solver.isSolved(board));
+    assertTrue(SudokuSolver.isSolved(board));
     board.setValue(1,1,4); //changes a value so next call is false
-    assertFalse(solver.isSolved(board));
+    assertFalse(SudokuSolver.isSolved(board));
     board.setValue(1,1,3); //changes value back to original value
-    assertTrue(solver.isSolved(board));
+    assertTrue(SudokuSolver.isSolved(board));
   }
 
   @Test
   public void validValueTest() {
     String boardString = "391286574487359126652714839875431692213967485964528713149673258538142967726895341";
     SudokuBoard board = new SudokuBoard(boardString);
-    SudokuSolver solver = new SudokuSolver();
     for (int i = 1; i < 10; i++) {
       for (int j = 1; j < 10; j++) {
         for (int val = 1; val < 10; val++) {
-          assertFalse(solver.validValue(board, i, j, val));
+          assertFalse(SudokuSolver.validValue(board, i, j, val));
         }
       }
     }
     board.setValue(1,1,0);
-    assertTrue(solver.validValue(board, 1, 1, 3));
+    assertTrue(SudokuSolver.validValue(board, 1, 1, 3));
   }
 
   @Test
   public void generatePencilsTest() {
     String boardString = "391286574487359126652714839875431692213967485964528713149673258538142967726895341";
     SudokuBoard board = new SudokuBoard(boardString);
-    SudokuSolver solver = new SudokuSolver();
     ArrayList<Integer> compareList = new ArrayList<Integer>();
     compareList.add(new Integer(3));
     board.setValue(1,1,0);
-    solver.generatePencils(board, 1, 1);
+    SudokuSolver.generatePencils(board, 1, 1);
     assertTrue(board.getPencils(1, 1).equals(compareList));
     compareList.add(new Integer(4));
     assertFalse(board.getPencils(1, 1).equals(compareList));
@@ -97,8 +91,8 @@ public class SudokuSolverTest {
     String solvedString = "794582136268931745315476982689715324432869571157243869821657493943128657576394218";
     SudokuBoard unsolvedBoard = new SudokuBoard(boardString);
     SudokuBoard solvedBoard = new SudokuBoard(solvedString);
-    SudokuSolver solver = new SudokuSolver();
-    SudokuBoard compareBoard = solver.bruteForceSolve(unsolvedBoard, false);
+    SudokuBoard compareBoard = SudokuSolver.bruteForceSolve(
+        unsolvedBoard, false);
     assertTrue(solvedBoard.equals(compareBoard));
   }
 
@@ -116,11 +110,10 @@ public class SudokuSolverTest {
     //Multiple lines board
     puzzles.add("009030600036014089100869035090000800010000090068090170601903002972640300003020900");
 
-    SudokuSolver solver = new SudokuSolver();
     for (String puzzle : puzzles) {
       SudokuBoard board = new SudokuBoard(puzzle);
-      SudokuBoard bruteForce = solver.bruteForceSolve(board, false);
-      SudokuBoard nonBruteForce = solver.solve(board);
+      SudokuBoard bruteForce = SudokuSolver.bruteForceSolve(board, false);
+      SudokuBoard nonBruteForce = SudokuSolver.solve(board);
       assertTrue(bruteForce.toString().equals(nonBruteForce.toString()));
     }
   }

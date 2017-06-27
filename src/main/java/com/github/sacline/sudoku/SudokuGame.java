@@ -66,7 +66,6 @@ public class SudokuGame extends Application {
 
   private SudokuBoard currentBoard;
   private SudokuBoard currentSolution;
-  private SudokuSolver solver = new SudokuSolver();
 
   private ArrayList<SudokuBoard> easyPuzzles = new ArrayList<SudokuBoard>();
   private ArrayList<SudokuBoard> easySolutions = new ArrayList<SudokuBoard>();
@@ -349,7 +348,7 @@ public class SudokuGame extends Application {
     checkPuzzle.setOnAction(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent event) {
-        if (solver.isSolved(currentBoard)) {
+        if (SudokuSolver.isSolved(currentBoard)) {
           puzzleSolved.setText("Puzzle is solved!");
           puzzleSolved.setVisible(true);
         } else {
