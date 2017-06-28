@@ -8,7 +8,7 @@ Java implementation of Sudoku puzzle game.
 
 * Board with ability to keep square values, pencils, and a record of moves made.
 
-* Solver with brute force recursive backtracking algorithm for solving of a board. Four deterministic solving algorithms implemented.
+* Solver with brute force recursive backtracking algorithm to solve any board. Four "human-like" solving algorithms implemented.
 
 * GUI that allows the user to play Sudoku using a combination of keyboard and mouse inputs. Requires a properly formatted input file (included in this repo at src/main/resources).
 
