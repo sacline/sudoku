@@ -329,6 +329,8 @@ public final class SudokuSolver {
    * Solves "Single Position" cells in each row.
    * Looks for cells that are the only cell in the row to contain a particular
    * pencil digit, and sets the cell's value to this pencil.
+   *
+   * @param board the board to check
    */
   private static void singlePositionRows(SudokuBoard board) {
     for (int r = 1; r < 10; r++) {
@@ -356,6 +358,8 @@ public final class SudokuSolver {
    * Solves "Single Position" cells in each column.
    * Looks for cells that are the only cell in the col to contain a particular
    * pencil digit, and sets the cell's value to this pencil.
+   *
+   * @param board the board to check
    */
   private static void singlePositionCols(SudokuBoard board) {
     for (int c = 1; c < 10; c++) {
@@ -383,6 +387,8 @@ public final class SudokuSolver {
    * Solves "Single Position" cells in each region.
    * Looks for cells that are the only cell in the reg to contain a particular
    * pencil digit, and sets the cell's value to this pencil.
+   *
+   * @param board the board to check
    */
   private static void singlePositionRegs(SudokuBoard board) {
     for (int reg = 1; reg < 10; reg++) {
