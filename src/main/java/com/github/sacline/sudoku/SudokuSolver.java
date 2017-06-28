@@ -320,13 +320,22 @@ public final class SudokuSolver {
    * @param board the board to check
    */
   private static void singlePosition(SudokuBoard board) {
-    //check each row
+    singlePositionRows(board);
+    singlePositionCols(board);
+    singlePositionRegs(board);
+  }
+
+  /**
+   * Solves "Single Position" cells in each row.
+   * Looks for cells that are the only cell in the row to contain a particular
+   * pencil digit, and sets the cell's value to this pencil.
+   */
+  private static void singlePositionRows(SudokuBoard board) {
     for (int r = 1; r < 10; r++) {
       int[] penCount = {0, 0, 0, 0, 0, 0, 0, 0, 0};
       int[] cols = {0, 0, 0, 0, 0, 0, 0, 0, 0};
       for (int c = 1; c < 10; c++) {
-        int val = board.getValue(r, c);
-        if (val == 0) {
+        if (board.getValue(r, c) == 0) {
           for (Integer pen : board.getPencils(r, c)) {
             penCount[pen - 1] += 1;
             cols[pen - 1] = c;
@@ -341,13 +350,19 @@ public final class SudokuSolver {
         }
       }
     }
-    //check each column
+  }
+
+  /**
+   * Solves "Single Position" cells in each column.
+   * Looks for cells that are the only cell in the col to contain a particular
+   * pencil digit, and sets the cell's value to this pencil.
+   */
+  private static void singlePositionCols(SudokuBoard board) {
     for (int c = 1; c < 10; c++) {
       int[] penCount = {0, 0, 0, 0, 0, 0, 0, 0, 0};
       int[] rows = {0, 0, 0, 0, 0, 0, 0, 0, 0};
       for (int r = 1; r < 10; r++) {
-        int val = board.getValue(r, c);
-        if (val == 0) {
+        if (board.getValue(r, c) == 0) {
           for (Integer pen : board.getPencils(r, c)) {
             penCount[pen - 1] += 1;
             rows[pen - 1] = r;
@@ -362,23 +377,29 @@ public final class SudokuSolver {
         }
       }
     }
-    //check each region
+  }
+
+  /**
+   * Solves "Single Position" cells in each region.
+   * Looks for cells that are the only cell in the reg to contain a particular
+   * pencil digit, and sets the cell's value to this pencil.
+   */
+  private static void singlePositionRegs(SudokuBoard board) {
     for (int reg = 1; reg < 10; reg++) {
       int[] startingRow = {1, 1, 1, 4, 4, 4, 7, 7, 7};
       int[] startingCol = {1, 4, 7, 1, 4, 7, 1, 4, 7};
       int[] penCount = {0, 0, 0, 0, 0, 0, 0, 0, 0};
       int[] rows = {0, 0, 0, 0, 0, 0, 0, 0, 0};
       int[] cols = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-      for (int row = startingRow[reg - 1];
-          row < startingRow[reg - 1] + 3; row++) {
-        for (int col = startingCol[reg - 1];
-            col < startingRow[reg - 1] + 3; col++) {
-          int val = board.getValue(row, col);
-          if (val == 0) {
-            for (Integer pen : board.getPencils(row, col)) {
+      for (int r = startingRow[reg - 1];
+          r < startingRow[reg - 1] + 3; r++) {
+        for (int c = startingCol[reg - 1];
+            c < startingRow[reg - 1] + 3; c++) {
+          if (board.getValue(r, c) == 0) {
+            for (Integer pen : board.getPencils(r, c)) {
               penCount[pen - 1] += 1;
-              rows[pen - 1] = row;
-              cols[pen - 1] = col;
+              rows[pen - 1] = r;
+              cols[pen - 1] = c;
             }
           }
         }
@@ -392,6 +413,8 @@ public final class SudokuSolver {
       }
     }
   }
+
+
 
   /**
    * Solves "Single Candidate" squares on the board.
