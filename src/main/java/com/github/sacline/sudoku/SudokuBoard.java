@@ -4,9 +4,9 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.NoSuchElementException;
 
@@ -274,7 +274,7 @@ public class SudokuBoard {
     for (int i = 1; i < 10; i++) {
       for (int j = 1; j < 10; j++) {
         if (this.getValue(i, j) == compareboard.getValue(i, j)
-            && this.getPencils(i, j).equals(compareboard.getPencils(i,j))) {
+            && this.getPencils(i, j).equals(compareboard.getPencils(i, j))) {
           continue;
         } else {
           return false;
@@ -301,7 +301,7 @@ public class SudokuBoard {
           result *= 31;
           result += pencil.hashCode();
         }
-        result += this.getPencils(i,j).hashCode();
+        result += this.getPencils(i, j).hashCode();
       }
     }
     return result;
@@ -467,22 +467,22 @@ public class SudokuBoard {
     /**
      * Adds a penciled value.
      *
-     * @param value value to pencil in
+     * @param penValue value to pencil in
      */
-    private void addPencil(int value) {
-      validateValue(value);
-      pencils.add(value);
+    private void addPencil(int penValue) {
+      validateValue(penValue);
+      pencils.add(penValue);
       Collections.sort(pencils);
     }
 
     /**
      * Removes a penciled value.
      *
-     * @param value value to unpencil
+     * @param penValue value to unpencil
      */
-    private void removePencil(int value) {
-      validateValue(value);
-      pencils.remove(new Integer(value));
+    private void removePencil(int penValue) {
+      validateValue(penValue);
+      pencils.remove(new Integer(penValue));
     }
 
     /** Removes all penciled values. */
@@ -512,10 +512,10 @@ public class SudokuBoard {
     /**
      * Throws exceptions for a bad input.
      *
-     * @param value value to check
+     * @param checkValue value to check
      */
-    private void validateValue(int value) {
-      if (value < 0 || value > 9) {
+    private void validateValue(int checkValue) {
+      if (checkValue < 0 || checkValue > 9) {
         throw new IllegalArgumentException("Value must be between 0 and 9.");
       }
     }
